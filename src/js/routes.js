@@ -1,7 +1,6 @@
 import React from 'react';
 import Loadable from 'react-loadable'
 
-
 import { Layout } from './containers/index';
 
 function Loading() {
@@ -38,10 +37,16 @@ const SolicitudEstudiantil = Loadable({
 });
 
 
+const Adicion = Loadable({
+  loader: () => import('./components/procesos/adicion'),
+  loading: Loading,
+});
+
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Layout },
   { path: '/login', name: 'Login', component: Login },
   { path: '/inicio', name: 'Inicio', component: Inicio },
+  { path: '/adicion', name: 'Adicion', component: Adicion },
   { path: '/informacion', name: 'Informacion', component: Informacion },
   {path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
   {path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
