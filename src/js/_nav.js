@@ -48,7 +48,7 @@ export default {
     },
     {
       name: 'Adicion, Cambio o Retiro',
-      url: '/INGRESAURL',
+      url: '/adicion',
       icon: 'icon-puzzle',
     },
     {

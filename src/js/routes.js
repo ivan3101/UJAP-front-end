@@ -17,10 +17,16 @@ const Inicio = Loadable({
   loading: Loading,
 });
 
+const Adicion = Loadable({
+  loader: () => import('./components/procesos/adicion'),
+  loading: Loading,
+});
+
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Layout },
   { path: '/login', name: 'Login', component: Login },
   { path: '/inicio', name: 'Inicio', component: Inicio },
+  { path: '/adicion', name: 'Adicion', component: Adicion },    
 ];
 
 export default routes;
