@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import NotFound from "./not-found";
+import Home from "./home";
 import Login from "./components/login/login";
 import { Layout } from './containers';
 // Import Simple Line Icons Set
