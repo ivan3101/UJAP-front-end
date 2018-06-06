@@ -25,7 +25,7 @@ export default {
     },
     {
       name: 'Liberacion Articulo 58',
-      url: '/INGRESAURL',
+      url: '/INGRESA',
       icon: 'icon-drop',
     },
     {
