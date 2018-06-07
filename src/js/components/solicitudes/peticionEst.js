@@ -4,7 +4,7 @@ import { Button, Form, FormGroup, Label, Input, FormText, Fade} from 'reactstrap
 class SolicitudEstudiantil extends Component {
     render = () => (
         <div>
-          <div></div>
+          
             <h1>Aqui es donde van los datos del estudiante por alguna razon</h1>
             <h3>con fotico y todo porque somos gays o no sé</h3>
             <h5>気持ちいい</h5>
