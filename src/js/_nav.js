@@ -104,12 +104,17 @@ export default {
         },
         {
           name: 'Situacion Academica',
+          url: '/datos/situacion-academico1',
+          icon: 'icon-cursor',
+        },
+        {
+          name: 'Situacion Academica',
           url: '/datos/situacion-academico',
           icon: 'icon-cursor',
         },
         {
-          name: 'OPCIONES',
-          url: '/INGRESAURL',
+          name: 'Historico Administrativo',
+          url: '/datos/historico-administrativo',
           icon: 'icon-cursor',
         },
       ],

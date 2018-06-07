@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Container,  Col } from 'reactstrap';
-import  './datos-academicos.css'
+import  './josechaparro.css'
 
 class Situacion extends React.Component {
     
@@ -14,57 +14,248 @@ class Situacion extends React.Component {
 
       };
 
+      const style1 = {
+        textAlign: 'right',
+        backgroundColor: '#336699',  
+        color: 'white',
+
+      };
+
     return (
 
-      <Container className="border "> 
-          <br />
-        <Container style={style}> <Col  md="12"> Situacion Academica </Col> </Container>
-        <Table size="sm">
-            <thead>
-            <tr>
-                <th>Semestre</th>
-                <th>Asignatura</th>
-                <th>Nota</th>
-                <th>UC</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">8</th>
-                <td>ACI08304 Interfaces de Usuario</td>
-                <td>00</td>
-                <td>00</td>
-            </tr>
-            <tr>
-                <th scope="row">8</th>
-                <td>ACI08304 Interfaces de Usuario</td>
-                <td>00</td>
-                <td>00</td>
+    <Container className="border "> 
+        <br />
+        <Container style={style}> <Col  md="12"> Semestre 1 </Col> </Container> 
+            <Table size="sm" width="100%">
+                    <th colspan="1" scope="row">ICU08304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                <thead>
+                <tr>
+                    <th>Descripcion</th>
+                    <th>Asignatura</th>
+                    <th>Nota</th>
+                    <th>U.C.</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th colspan="1" scope="row">ICU08304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU08304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU08304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
 
-            </tr>
-            <tr>
-                <th scope="row">8</th>
-                <td>ACI08304 Interfaces de Usuario</td>
-                <td>00</td>
-                <td>00</td>
+                </tr>
+                </tbody>
+            </Table>
+            <hr />
+            <br />
+            <br />
 
-            </tr>
-            <tr>
-            <th scope="row"></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                    U.C. Aprobadas: 0
-                    <br/>
-                    Indice Academico(IA):<span className="red" >00</span>
-                </td>
-            </tr>
-            </tbody>
-        </Table>
-    </Container>    
+ 
+
+        <Container style={style}> <Col  md="12"> Semestre 2 </Col> </Container> 
+            <Table size="sm" width="100%">
+                    <th colspan="1" scope="row">ICU02304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                <thead>
+                <tr>
+                    <th>Descripcion</th>
+                    <th>Asignatura</th>
+                    <th>Nota</th>
+                    <th>U.C.</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th colspan="1" scope="row">ICU02304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU02304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU02304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU02304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU02304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+
+                </tr>
+                </tbody>
+            </Table>
+            <hr />
+            <br />
+            <br />
+
+ 
+
+        <Container style={style}> <Col  md="12"> Semestre 3 </Col> </Container> 
+            <Table size="sm" width="100%">
+                    <th colspan="1" scope="row">ICU03304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                <thead>
+                <tr>
+                    <th>Descripcion</th>
+                    <th>Asignatura</th>
+                    <th>Nota</th>
+                    <th>U.C.</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th colspan="1" scope="row">ICU03304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU03304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU03304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU03304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU03304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+
+                </tr>
+                </tbody>
+            </Table>
+            <hr />
+            <br />
+            <br />
+
+ 
+
+        <Container style={style}> <Col  md="12"> Semestre 4 </Col> </Container> 
+            <Table size="sm" width="100%">
+                    <th colspan="1" scope="row">ICU04304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                <thead>
+                <tr>
+                    <th>Descripcion</th>
+                    <th>Asignatura</th>
+                    <th>Nota</th>
+                    <th>U.C.</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th colspan="1" scope="row">ICU04304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU04304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+                    
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU04304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU04304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+
+                </tr>
+                <tr>
+                    <th colspan="1" scope="row">ICU04304</th>
+                    <td colspan="1">Interfaces de usuario</td>
+                    <td align="center">15</td>
+                    <td align="center">3</td>
+
+                </tr>
+                </tbody>
+            </Table>
+            <hr />
+            <br />
+            <br />
+                       
+    
+        <Container style={style1}> <Col  md="12"> 
+            <th scope="row" width="100%"></th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td align="right">U.C. Aprobadas: 20
+                <br/>
+                Indice Academico(IA): <span className="red" >15</span>
+                        
+            </td>
+        </Col> </Container> 
+    </Container>
     );
   }
 }
