@@ -58,12 +58,12 @@ export default {
     {
       name: 'Horarios',
       url: '/datos',
-      icon: 'icon-cursor',
+      icon: 'icon-clock',
       children: [
         {
           name: 'Horario Por Seccion',
           url: '/datos/horario-seccion',
-          icon: 'icon-cursor',
+          icon: 'icon-clock',
         },
         {
           name: 'OPCIONES',
@@ -85,15 +85,15 @@ export default {
     {
       name: 'Datos Academicos',
       url: '/datos',
-      icon: 'icon-cursor',
+      icon: 'icon-calendar',
       children: [
         {
           name: 'Historico Academico',
           url: '/datos/historico-academico',
-          icon: 'icon-cursor',
+          icon: 'icon-calendar',
         },
         {
-          name: 'Situación Académica',
+          name: 'Situacion Academica',
           url: '/sitacdm',
           icon: 'icon-cursor',
         },
