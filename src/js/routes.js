@@ -64,10 +64,10 @@ const routes = [
   { path: '/procesos/adicion', name: 'Adicion', component: Adicion },
   { path: '/procesos/sol-ret-sem', name: 'SolicitudRetiroSemestre', component: SolicitudRetiroSemestre },
   { path: '/informacion', name: 'Informacion', component: Informacion },
-  {path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
-  {path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
-  {path: '/datos/sitacdm', name: 'Situacion Academica', component: SituacionAcademica },
-  {path: '/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil}
+  { path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion },
+  { path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico },
+  { path: '/datos/sitacdm', name: 'Situacion Academica', component: SituacionAcademica },
+  { path: '/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil }
 ];
 
 export default routes;
