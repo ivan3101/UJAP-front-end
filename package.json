@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@coreui/coreui": "^2.0.1",
+    "@coreui/coreui": "^2.0.2",
     "@coreui/icons": "^0.2.0",
     "@coreui/react": "^2.0.0",
     "autoprefixer": "7.1.6",
@@ -41,12 +41,13 @@
     "prop-types": "^15.6.1",
     "raf": "3.4.0",
     "react": "^16.4.0",
+    "react-countup": "^3.0.3",
     "react-dev-utils": "^5.0.1",
     "react-dom": "^16.4.0",
     "react-loadable": "^5.4.0",
     "react-router-config": "^1.0.0-beta.4",
-    "react-router-dom": "^4.2.2",
-    "reactstrap": "^6.0.1",
+    "react-router-dom": "^4.3.1",
+    "reactstrap": "^6.1.0",
     "resolve": "1.6.0",
     "simple-line-icons": "^2.4.1",
     "style-loader": "0.19.0",
@@ -112,6 +113,6 @@
     "cross-env": "^5.1.6",
     "node-sass": "^4.9.0",
     "redux": "^4.0.0",
-    "sass-loader": "^7.0.2"
+    "sass-loader": "^7.0.3"
   }
 }

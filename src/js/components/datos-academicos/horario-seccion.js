@@ -77,6 +77,7 @@ hasta 07:15 pm</th>
 
 
         return(
+            <Fade>
             <Container>
                 <Row>
                     <Col md="2" className="horarioStyle" >
@@ -108,7 +109,8 @@ hasta 07:15 pm</th>
                       
                 </Row>
 
-            </Container>    
+            </Container>  
+            </Fade>  
 
         );
     }

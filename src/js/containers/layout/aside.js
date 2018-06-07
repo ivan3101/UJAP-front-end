@@ -234,36 +234,36 @@ class Aside extends Component {
               </small>
                         </div>
                     </TabPane>
-                    <TabPane tabId="3" className="p-3">
-                        <h6>Opciones</h6>
+                    {/*<TabPane tabId="3" className="p-3">*/}
+                        {/*<h6>Opciones</h6>*/}
 
-                        <div className="aside-options">
-                            <div className="clearfix mt-4">
-                                <small><b>Modo Daltonico</b></small>
-                                <AppSwitch className={'float-right'} variant={'pill'} label color={'primary'} defaultChecked size={'sm'} />
-                            </div>
-                            <div>
-                                <small className="text-muted">Hemos creado un modo especial para que los usuarios aquejados de deuteranopia (daltonismo  azul-rojo) puedan distinguir mejor las barras de las opciones como tambien las notificaciones.
-                </small>
-                            </div>
-                        </div>
+                        {/*<div className="aside-options">*/}
+                            {/*<div className="clearfix mt-4">*/}
+                                {/*<small><b>Modo de Discapacidad Visual</b></small>*/}
+                                {/*<AppSwitch className={'float-right'} variant={'pill'} label color={'primary'} defaultChecked size={'sm'} />*/}
+                            {/*</div>*/}
+                            {/*<div>*/}
+                                {/*<small className="text-muted">Hemos creado un modo especial para que los usuarios aquejados de discapacidades visuales como las distintas variantes de daltonismo puedan utilizar la aplicacion sin problemas.*/}
+                {/*</small>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
 
-                        <div className="aside-options">
-                            <div className="clearfix mt-3">
-                                <small><b>Opcion 2</b></small>
-                                <AppSwitch className={'float-right'} variant={'pill'} label color={'primary'} size={'sm'} />
-                            </div>
-                            <div>
-                                <small className="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua.
-                </small>
-                            </div>
-                        </div>
+                        {/*<div className="aside-options">*/}
+                            {/*<div className="clearfix mt-3">*/}
+                                {/*<small><b>Opcion 2</b></small>*/}
+                                {/*<AppSwitch className={'float-right'} variant={'pill'} label color={'primary'} size={'sm'} />*/}
+                            {/*</div>*/}
+                            {/*<div>*/}
+                                {/*<small className="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod*/}
+                  {/*tempor incididunt ut labore et dolore magna aliqua.*/}
+                {/*</small>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
 
-                    
-                        <hr />
-                        
-                    </TabPane>
+                    {/**/}
+                        {/*<hr />*/}
+                        {/**/}
+                    {/*</TabPane>*/}
                 </TabContent>
             </React.Fragment>
         );

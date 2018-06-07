@@ -26,7 +26,7 @@ export default {
     },
     {
       name: 'Peticion Estudiantil',
-      url: '/INGRESAURL',
+      url: '/solicitudes/peticionEst',
       icon: 'icon-pencil',
     },
     {
@@ -44,7 +44,7 @@ export default {
     },
     {
       name: 'Adicion, Cambio o Retiro',
-      url: '/INGRESAURL',
+      url: '/adicion',
       icon: 'icon-puzzle',
     },
     {
@@ -93,8 +93,8 @@ export default {
           icon: 'icon-cursor',
         },
         {
-          name: 'OPCIONES',
-          url: '/INGRESAURL',
+          name: 'Situación Académica',
+          url: '/sitacdm',
           icon: 'icon-cursor',
         },
         {
