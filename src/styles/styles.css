@@ -38,13 +38,13 @@
     --gray-700: #5c6873;
     --gray-800: #2f353a;
     --gray-900: #23282c;
-    --primary: #20a8d8;
+    --primary: #336699;
     --secondary: #c8ced3;
     --success: #4dbd74;
-    --info: #63c2de;
-    --warning: #ffc107;
+    --info: #60b5fe;
+    --warning: #EEDDA0;
     --danger: #f86c6b;
-    --light: #f0f3f5;
+    --light: #f2f3f2;
     --dark: #2f353a;
     --breakpoint-xs: 0;
     --breakpoint-sm: 576px;

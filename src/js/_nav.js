@@ -4,10 +4,6 @@ export default {
       name: 'Inicio',
       url: '/inicio',
       icon: 'icon-graduation',
-      badge: {
-        variant: 'info',
-        text: 'Nuevo',
-      },
     },
     {
       name: 'Informacion',
@@ -139,26 +135,26 @@ export default {
       children: [
         {
           name: 'Cargar Notas',
-          url: '/login',
+          url: '/1',
           icon: 'icon-star',
         },
         {
           name: 'Secciones',
-          url: '/register',
+          url: '/2',
           icon: 'icon-star',
         },
         {
           name: 'Estudiantes Inscritos',
-          url: '/404',
+          url: '/3',
           icon: 'icon-star',
         },
       ],
     },
     {
       name: 'Desconectar',
-      url: '#',
+      url: '/login',
       icon: 'icon-layers',
-      variant: 'danger',
+      variant: 'light-dark',
     },
   ],
 };
