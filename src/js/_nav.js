@@ -30,7 +30,7 @@ export default {
     },
     {
       name: 'Peticion Estudiantil',
-      url: '/INGRESAURL',
+      url: '/solicitudes/peticionEst',
       icon: 'icon-pencil',
     },
     {
