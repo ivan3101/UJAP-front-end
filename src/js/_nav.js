@@ -97,8 +97,8 @@ export default {
           icon: 'icon-cursor',
         },
         {
-          name: 'Situación Académica',
-          url: '/sitacdm',
+          name: 'Situacion Academica',
+          url: '/datos/sitacdm',
           icon: 'icon-cursor',
         },
         {
