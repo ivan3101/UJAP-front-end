@@ -38,13 +38,23 @@ export default {
       },
     },
     {
-      name: 'Inscripcion Acad.',
-      url: '/INGRESAURL',
+      name: 'Inscripcion academica',
+      url: '/procesos/INGRESAURL',
       icon: 'icon-puzzle',
     },
     {
-      name: 'Adicion, Cambio o Retiro',
-      url: '/adicion',
+      name: 'Retiro academico',
+      url: '/procesos/ret-acad',
+      icon: 'icon-puzzle',
+    },
+    {
+      name: 'Adicion, cambio o retiro',
+      url: '/procesos/adicion',
+      icon: 'icon-puzzle',
+    },
+    {
+      name: 'Solicitud de retiro del semestre',
+      url: '/procesos/sol-ret-sem',
       icon: 'icon-puzzle',
     },
     {
@@ -94,8 +104,7 @@ export default {
         },
         {
           name: 'Situacion Academica',
-          url: '/sitacdm',
-          url: '/datos/sitacdm',
+          url: '/datos/situacion-academico',
           icon: 'icon-cursor',
         },
         {
