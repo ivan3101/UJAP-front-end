@@ -46,6 +46,10 @@ const Adicion = Loadable({
   loading: Loading,
 });
 
+const Articulo58 = Loadable({
+    loader: () => import('./components/solicitudes/art58'),
+    loading: Loading
+});
 
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Layout },
@@ -56,7 +60,8 @@ const routes = [
   {path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
   {path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
   {path: '/datos/sitacdm', name: 'Situacion Academica', component: SituacionAcademica },
-  {path: '/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil}
+  {path: '/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil},
+  { path: '/solicitudes/articulo-58', name: 'Articulo 58', component: Articulo58 }
 ];
 
 export default routes;
