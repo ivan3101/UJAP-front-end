@@ -36,6 +36,10 @@ const SolicitudEstudiantil = Loadable({
   loading: Loading,
 });
 
+const SituacionAcademica = Loadable({
+  loader: () => import('./components/datos-academicos/sitacdm'),
+  loading: Loading,
+});
 
 const Adicion = Loadable({
   loader: () => import('./components/procesos/adicion'),
