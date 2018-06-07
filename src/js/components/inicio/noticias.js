@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Card, CardBody, CardFooter, CardTitle, CardText, Col,Row, Container, NavLink} from 'reactstrap';
 
 const cardColor = {
-    width: '430px',
+   
     backgroundColor:'#336699',
     color:'white',   
   };
@@ -16,7 +16,7 @@ const cardFooter = {
  class Noticias extends Component {
     render() {
         return(
-            <div>
+            
                 <Container>
                 <Row>
                     <Col md="6">
@@ -91,7 +91,7 @@ const cardFooter = {
                     </Col>
         </Row>
         </Container>
-        </div>
+        
         )
 
     }
