@@ -32,15 +32,18 @@ const HistoricoAcademico = Loadable({
   loading: Loading,
 });
 
-
+const SituacionAcademico = Loadable({
+    loader: () => import('./components/datos-academicos/situacion-academica'),
+    loading: Loading,
+});
 
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Layout },
   { path: '/login', name: 'Login', component: Login },
   { path: '/inicio', name: 'Inicio', component: Inicio },
-  { path: '/informacion', name: 'Informacion', component: Informacion },
   {path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
-  {path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
+    {path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
+    {path:'/datos/situacion-academico', name:'Situacion Academica', component:SituacionAcademico},
 ];
 
 export default routes;
