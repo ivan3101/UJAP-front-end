@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Container,  Col } from 'reactstrap';
+import { Table, Container,  Col, Fade } from 'reactstrap';
 import  './datos-academicos.css'
 
 class Historial extends React.Component {
@@ -15,7 +15,8 @@ class Historial extends React.Component {
       };
 
     return (
-
+       
+      <Fade>  
       <Container className="border "> 
           <br />
         <Container style={style}> <Col  md="12"> Periodo: 20181CR </Col> </Container> 
@@ -139,7 +140,8 @@ class Historial extends React.Component {
             </tbody>
         </Table>
 
-    </Container>    
+    </Container>
+    </Fade>    
     );
   }
 }

@@ -1,0 +1,44 @@
+.red{
+    color:red;
+}
+
+.border{
+    border: 1px solid grey;
+    background-color: #F2F3F2;
+    
+    
+}
+
+
+
+.peticionStyle{
+
+    background-color: #F2F3F2;
+    height: 250px;
+    border:1px solid gray;
+    text-align:center;
+    
+
+}
+
+.prueba{
+    background-color: #F2F3F2;
+}
+
+.peticionStyle Button{
+    height: 30px;
+    padding-top: 2px;
+    margin: auto;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+.Button2{
+    margin-top: px;
+    
+}
+
+.tableDatosEst{
+    border:1px solid grey;
+    
+}
