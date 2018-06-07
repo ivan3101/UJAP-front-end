@@ -25,7 +25,7 @@ export default {
     },
     {
       name: 'Liberacion Articulo 58',
-      url: '/INGRESA',
+      url: '/INGRESAURL',
       icon: 'icon-drop',
     },
     {
@@ -61,12 +61,12 @@ export default {
     },
     {
       name: 'Horarios',
-      url: '/INGRESAURL',
+      url: '/datos',
       icon: 'icon-cursor',
       children: [
         {
-          name: 'OPCIONES',
-          url: '/INGRESAURL',
+          name: 'Horario Por Seccion',
+          url: '/datos/horario-seccion',
           icon: 'icon-cursor',
         },
         {
@@ -88,12 +88,12 @@ export default {
     },
     {
       name: 'Datos Academicos',
-      url: '/INGRESAURL',
+      url: '/datos',
       icon: 'icon-cursor',
       children: [
         {
-          name: 'OPCIONES',
-          url: '/INGRESAURL',
+          name: 'Historico Academico',
+          url: '/datos/historico-academico',
           icon: 'icon-cursor',
         },
         {
