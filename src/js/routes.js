@@ -32,6 +32,10 @@ const HistoricoAcademico = Loadable({
   loading: Loading,
 });
 
+const SolicitudEstudiantil = Loadable({
+  loader: () => import('./components/solicitudes/peticionEst'),
+  loading: Loading,
+});
 
 
 const routes = [
@@ -41,6 +45,7 @@ const routes = [
   { path: '/informacion', name: 'Informacion', component: Informacion },
   {path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
   {path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
+  {path: '/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil}
 ];
 
 export default routes;
