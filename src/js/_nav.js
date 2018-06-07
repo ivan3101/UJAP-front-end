@@ -104,8 +104,7 @@ export default {
         },
         {
           name: 'Situacion Academica',
-          url: '/sitacdm',
-          url: '/datos/sitacdm',
+          url: '/datos/situacion-academico',
           icon: 'icon-cursor',
         },
         {
