@@ -4,10 +4,6 @@ export default {
       name: 'Inicio',
       url: '/inicio',
       icon: 'icon-graduation',
-      badge: {
-        variant: 'info',
-        text: 'Nuevo',
-      },
     },
     {
       name: 'Informacion',
@@ -30,7 +26,7 @@ export default {
     },
     {
       name: 'Peticion Estudiantil',
-      url: '/INGRESAURL',
+      url: '/solicitudes/peticionEst',
       icon: 'icon-pencil',
     },
     {
@@ -42,13 +38,23 @@ export default {
       },
     },
     {
-      name: 'Inscripcion Acad.',
-      url: '/INGRESAURL',
+      name: 'Inscripcion academica',
+      url: '/procesos/INGRESAURL',
       icon: 'icon-puzzle',
     },
     {
-      name: 'Adicion, Cambio o Retiro',
-      url: '/INGRESAURL',
+      name: 'Retiro academico',
+      url: '/procesos/ret-acad',
+      icon: 'icon-puzzle',
+    },
+    {
+      name: 'Adicion, cambio o retiro',
+      url: '/procesos/adicion',
+      icon: 'icon-puzzle',
+    },
+    {
+      name: 'Solicitud de retiro del semestre',
+      url: '/procesos/sol-ret-sem',
       icon: 'icon-puzzle',
     },
     {
@@ -62,12 +68,12 @@ export default {
     {
       name: 'Horarios',
       url: '/datos',
-      icon: 'icon-cursor',
+      icon: 'icon-clock',
       children: [
         {
           name: 'Horario Por Seccion',
           url: '/datos/horario-seccion',
-          icon: 'icon-cursor',
+          icon: 'icon-clock',
         },
         {
           name: 'OPCIONES',
@@ -89,16 +95,17 @@ export default {
     {
       name: 'Datos Academicos',
       url: '/datos',
-      icon: 'icon-cursor',
+      icon: 'icon-calendar',
       children: [
         {
           name: 'Historico Academico',
           url: '/datos/historico-academico',
-          icon: 'icon-cursor',
+          icon: 'icon-calendar',
         },
         {
-          name: 'OPCIONES',
-          url: '/INGRESAURL',
+          name: 'Situacion Academica',
+          url: '/sitacdm',
+          url: '/datos/sitacdm',
           icon: 'icon-cursor',
         },
         {
@@ -139,26 +146,26 @@ export default {
       children: [
         {
           name: 'Cargar Notas',
-          url: '/login',
+          url: '/1',
           icon: 'icon-star',
         },
         {
           name: 'Secciones',
-          url: '/register',
+          url: '/2',
           icon: 'icon-star',
         },
         {
           name: 'Estudiantes Inscritos',
-          url: '/404',
+          url: '/3',
           icon: 'icon-star',
         },
       ],
     },
     {
       name: 'Desconectar',
-      url: '#',
+      url: '/login',
       icon: 'icon-layers',
-      variant: 'danger',
+      variant: 'light-dark',
     },
   ],
 };
