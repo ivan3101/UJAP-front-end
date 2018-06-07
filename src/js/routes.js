@@ -46,25 +46,17 @@ const Adicion = Loadable({
   loading: Loading,
 });
 
-const Adicion = Loadable({
-  loader: () => import('./components/procesos/adicion'),
-  loading: Loading,
-});
 
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Layout },
   { path: '/login', name: 'Login', component: Login },
   { path: '/inicio', name: 'Inicio', component: Inicio },
-<<<<<<< HEAD
   { path: '/adicion', name: 'Adicion', component: Adicion },
   { path: '/informacion', name: 'Informacion', component: Informacion },
   {path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
   {path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
   {path: '/datos/sitacdm', name: 'Situacion Academica', component: SituacionAcademica },
   {path: '/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil}
-=======
-  { path: '/adicion', name: 'Adicion', component: Adicion },    
->>>>>>> 3528576228a60f81a983bde1461648367226e5b8
 ];
 
 export default routes;
