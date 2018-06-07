@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Card, CardBody, CardFooter, CardTitle, CardText, Col,Row, Container, NavLink} from 'reactstrap';
 
 const cardColor = {
-    width: '430px',
     backgroundColor:'#336699',
     color:'white',   
   };
