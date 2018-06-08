@@ -12,11 +12,6 @@ const Login = Loadable({
   loading: Loading,
 });
 
-const Articulo58 = Loadable({
-    loader: () => import('./components/solicitudes/art58'),
-    loading: Loading
-});
-
 const Inicio = Loadable({
   loader: () => import('./components/inicio/inicio'),
   loading: Loading,
@@ -42,6 +37,11 @@ const SituacionAcademico = Loadable({
     loading: Loading,
 });
 
+const SituacionAcademico1 = Loadable({
+  loader: () => import('./components/datos-academicos/sitacdm'),
+  loading: Loading,
+});
+
 const SolicitudEstudiantil = Loadable({
   loader: () => import('./components/solicitudes/peticionEst'),
   loading: Loading,
@@ -63,14 +63,22 @@ const SolicitudRetiroSemestre = Loadable({
   loading: Loading,
 });
 
+const HistoricoAdministrativo = Loadable({
+  loader: () => import('./components/datos-academicos/historico-administrativo'),
+  loading:Loading,
+
+});
+
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Layout },
   { path: '/login', name: 'Login', component: Login },
   { path: '/inicio', name: 'Inicio', component: Inicio },
-  { path: '/solicitudes/articulo-58', name: 'Articulo 58', component: Articulo58},
+
   {path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
     {path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
     {path:'/datos/situacion-academico', name:'Situacion Academica', component:SituacionAcademico},
+    {path:'/datos/situacion-academico1', name:'Situacion Academica', component:SituacionAcademico1},
+    {path:'/datos/historico-administrativo', name:'Historico Administrativo', component:HistoricoAdministrativo},
   { path: '/procesos/ret-acad', name: 'RetiroAcademico', component: RetiroAcademico },
   { path: '/procesos/adicion', name: 'Adicion', component: Adicion },
   { path: '/procesos/sol-ret-sem', name: 'SolicitudRetiroSemestre', component: SolicitudRetiroSemestre },
