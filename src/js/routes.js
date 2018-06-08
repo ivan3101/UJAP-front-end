@@ -66,14 +66,17 @@ const SolicitudRetiroSemestre = Loadable({
 const HistoricoAdministrativo = Loadable({
   loader: () => import('./components/datos-academicos/historico-administrativo'),
   loading:Loading,
+});
 
+const Articulo58 = Loadable({
+    loader: () => import('./components/solicitudes/art58'),
+    loading: Loading
 });
 
 const routes = [
   { path: '/', exact: true, name: 'Home', component: Layout },
   { path: '/login', name: 'Login', component: Login },
   { path: '/inicio', name: 'Inicio', component: Inicio },
-
   {path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
     {path:'/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
     {path:'/datos/situacion-academico', name:'Situacion Academica', component:SituacionAcademico},
@@ -84,7 +87,8 @@ const routes = [
   { path: '/procesos/sol-ret-sem', name: 'SolicitudRetiroSemestre', component: SolicitudRetiroSemestre },
   { path: '/informacion', name: 'Informacion', component: Informacion },
   { path:'/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion },
-  { path: '/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil }
+  { path: '/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil },
+    { path: '/solicitudes/articulo-58', name: 'Articulo 58', component: Articulo58}
 ];
 
 export default routes;
