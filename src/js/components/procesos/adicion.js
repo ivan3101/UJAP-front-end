@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Table, Container, Row, Col, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button, InputGroup} from 'reactstrap';
+import { Table, Container, Row, Col, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button, InputGroup, Form, FormGroup, Label, Input, Fade} from 'reactstrap';
+import './adicion.css';
 
 
 class Adicion extends React.Component {
@@ -25,7 +26,33 @@ class Adicion extends React.Component {
 render() {
      
         return(
+            
+    <div>
+            
             <div>
+            
+            <h1>marico el que lo lea </h1>
+                
+            
+            </div>
+            
+            
+            
+            
+            
+            <div>
+                    <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+                        <DropdownToggle caret>Materias</DropdownToggle>
+                        <DropdownMenu>
+                            <DropdownItem>Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am</DropdownItem>
+                            <DropdownItem>Electiva II Computacion Emergente 309c1 | Viernes 10:20 - 11:50am</DropdownItem>
+                            <DropdownItem>Control de Proyecto 309c1 | Martes 08:40 - 10:10am</DropdownItem>
+                            <DropdownItem>Sistemas de Informacion II 308c1 | Martes 10:20 - 11:50am</DropdownItem>
+                        </DropdownMenu>
+                    </ButtonDropdown>
+                    
+              
+                </div>
             
             <Table bordered>
                 <thead>
@@ -103,25 +130,14 @@ render() {
      
          
          
-                <div>
-                    <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-                        <DropdownToggle caret>Materias</DropdownToggle>
-                        <DropdownMenu>
-                            <DropdownItem>Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am</DropdownItem>
-                            <DropdownItem>Electiva II Computacion Emergente 309c1 | Viernes 10:20 - 11:50am</DropdownItem>
-                            <DropdownItem>Control de Proyecto 309c1 | Martes 08:40 - 10:10am</DropdownItem>
-                            <DropdownItem>Sistemas de Informacion II 308c1 | Martes 10:20 - 11:50am</DropdownItem>
-                        </DropdownMenu>
-                    </ButtonDropdown>
-                    
-              
-                </div>
+                
                     
             
                 <div>
                     
                     <Button  color="primary">Agregar</Button>{' '}
                     <Button  color="primary">Retirar</Button>{' '}   
+                    <Button  color="primary">Ratificar</Button>{' '}
             
                 </div>       
             
