@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Container, Row, Col, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button, InputGroup, Form, FormGroup, Label, Input, Fade} from 'reactstrap';
-import './adicion.css';
+
 
 
 class Adicion extends React.Component {
@@ -31,7 +31,7 @@ render() {
             
             <div>
             
-            <h1>marico el que lo lea </h1>
+            <h1>Hola Ivan</h1>
                 
             
             </div>
