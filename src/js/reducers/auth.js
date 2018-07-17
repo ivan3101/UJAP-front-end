@@ -21,7 +21,8 @@ export default (state = authReducerDefaultState, action) => {
         uc: "127",
         estado: "Activo",
         beca: "0%",
-        username: "idemeneze14"
+        username: "idemeneze14",
+        ratificado: false
       };
 
     case 'LOGIN_PROFESOR':
@@ -46,6 +47,12 @@ export default (state = authReducerDefaultState, action) => {
         email: "alirio@gmail.com",
         cedula: "24.828.518",
         password: "123456"
+      };
+
+    case 'RATIFICAR':
+      return {
+        ...state,
+        ratificado: true
       };
 
     default:

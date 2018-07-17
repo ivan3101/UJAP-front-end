@@ -9,3 +9,7 @@ export const loginProfesor = () => ({
 export const loginPersonal = () => ({
   type: 'LOGIN_PERSONAL'
 });
+
+export const ratificar = () => ({
+  type: 'RATIFICAR'
+});

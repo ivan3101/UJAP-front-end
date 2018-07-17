@@ -149,6 +149,6 @@ const mapStateToProps = (state) => {
     auth: state.auth,
     materias: state.materias
   }
-}
+};
 
 export default connect(mapStateToProps)(Informacion);
