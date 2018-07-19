@@ -1,4 +1,4 @@
-const materiasReducerDefaultState = []
+const materiasReducerDefaultState = [];
 
 export default (state = materiasReducerDefaultState, action) => {
   switch (action.type){
@@ -9,21 +9,19 @@ export default (state = materiasReducerDefaultState, action) => {
           nombre: 'Programacion Matematica',
           uc: '3',
           semestre: '9no',
-          horario: [{
-            profesor: 'Jesus Padron',
-            bloque: [
-              {
-                dia: 'Lunes',
-                inicio: '2018-07-15 16:00:00.000',
-                fin: '2018-07-15 18:25:00.000'
-              },
-              {
-                dia: 'Miercoles',
-                inicio: '2018-07-15 15:25:00.000',
-                fin: '2018-07-15 17:00:00.000'
-              }
-            ]
-          }]
+          estado: 'Aprobada'
+        },
+        {
+          nombre: 'Interfaces con el usuario',
+          uc: '5',
+          semestre: '9no',
+          estado: 'Aprobada'
+        },
+        {
+          nombre: 'Cultura',
+          uc: '2',
+          semestre: '9no',
+          estado: 'Aprobada'
         }
       ];
 

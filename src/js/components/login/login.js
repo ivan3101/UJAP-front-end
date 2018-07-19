@@ -89,7 +89,7 @@ class Login extends Component {
                     </InputGroup>
                     <Row>
                       <Col xs="6">
-                        <Button color="primary" className="px-4" onClick={this.onLogin}>Ingresar</Button>
+                        <Button color="primary" className="px-4" onClick={this.onLogin} id={'login'}>Ingresar</Button>
                       </Col>
                       <Col xs="6" className="text-right">
                         {/*<Button color="link" className="px-0">¿Olvidaste tu contraseña?</Button>*/}

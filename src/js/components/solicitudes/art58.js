@@ -1,91 +1,108 @@
 import React from 'react';
 import { Table, Container, Button, Row, Col} from 'reactstrap';
+import {connect} from 'react-redux';
+import uuid from 'uuid';
 
-const Articulo58 = () => (
-    <div>
+class Articulo58 extends React.Component {
+  state = {
+    sent: false,
+    error: false
+  };
+
+  onSend = () => {
+    if (this.state.sent) {
+      this.setState(() => ({
+        error: true
+      }))
+    } else {
+      this.setState(() => ({
+        sent: true
+      }));
+    }
+  };
+
+  render() {
+    return (
+      <div>
         <div>
-            <h1>Liberación de Articulo 58</h1>
-            <Table bordered responsive style={{backgroundColor: 'white'}}>
-                <tbody>
-                <tr>
-                    <th>Estudiante</th>
-                    <td>Jean Mobayed</td>
-                    <th>Cedula</th>
-                    <td>26.781.589</td>
-                    <th>Carrera</th>
-                    <td>Ingenieria de computación</td>
+          <h1>Liberación de Articulo 58</h1>
+          <Table bordered responsive style={{backgroundColor: 'white'}}>
+            <tbody>
+            <tr>
+              <th>Estudiante</th>
+              <td>{`${this.props.student.nombre} ${this.props.student.apellido}`}</td>
+              <th>Cedula</th>
+              <td>{this.props.student.cedula}</td>
+              <th>Carrera</th>
+              <td>{this.props.student.carrera}</td>
 
-                </tr>
+            </tr>
+            <tr>
+              <th>Indice Academico Acumulado</th>
+              <td>{this.props.student.promedio}</td>
+              <th>Periodo</th>
+              <td>20181CR</td>
+              <th>Estatus academido</th>
+              <td>Alumno regular {this.props.student.estado}</td>
+            </tr>
+            <tr>
+              <th>Estatus Administrativo</th>
+              <td>Sin beca</td>
+              <th>Total de UC aprobadas</th>
+              <td>{this.props.student.uc}</td>
+              <th>Cohorte</th>
+              <td>{this.props.student.cohorte}</td>
+            </tr>
+            </tbody>
+          </Table>
+        </div>
+        <div>
+          {this.state.sent && !this.state.error && (<div className="alert alert-success" role="alert">
+            Solicitud enviada correctamente
+          </div>)}
+          {this.state.error && (<div className="alert alert-danger" role="alert">
+            Usted ya tiene una solicitud pendiente. No puede agregar otra
+          </div>)}
+          <Row>
+            <Col sm={{ size: 3, offset: 9 }}>
+              <Button color={'primary'} size={'lg'} onClick={this.onSend} id={'liberar'}>Solicitar liberación de articulo</Button>
+            </Col>
+          </Row>
+          <Container style={{backgroundColor: 'white'}}>
+            <Table borderless responsive striped >
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Materia</th>
+                <th>U.C.</th>
+                <th>Semestre</th>
+                <th>Estado</th>
+              </tr>
+              </thead>
+              <tbody>
+              {this.props.materias.map((materia, index) => (
                 <tr>
-                    <th>Indice Academico Acumulado</th>
-                    <td>15.67</td>
-                    <th>Periodo</th>
-                    <td>20181CR</td>
-                    <th>Estatus academido</th>
-                    <td>Alumno regular activo</td>
+                  <td>{index}</td>
+                  <td>{materia.nombre}</td>
+                  <td>{materia.uc}</td>
+                  <td>{materia.semestre}</td>
+                  <td>{materia.estado}</td>
                 </tr>
-                <tr>
-                    <th>Estatus Administrativo</th>
-                    <td>Sin beca</td>
-                    <th>Total de UC aprobadas</th>
-                    <td>144</td>
-                    <th>Cohorte</th>
-                    <td>39</td>
-                </tr>
-                </tbody>
+              ))}
+              </tbody>
             </Table>
+          </Container>
         </div>
-        <div>
-            <Row>
-                <Col sm={{ size: 3, offset: 9 }}>
-                    <Button color={'primary'} size={'lg'}>Solicitar liberación de articulo</Button>
-                </Col>
-            </Row>
-            <Container style={{backgroundColor: 'white'}}>
-                <Table borderless responsive striped >
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Materia</th>
-                        <th>U.C.</th>
-                        <th>Semestre</th>
-                        <th>Estado</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Metodos cuantitativos</td>
-                        <td>4</td>
-                        <td>8</td>
-                        <td>Aprobada</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Arquitectura del Computador</td>
-                        <td>4</td>
-                        <td>8</td>
-                        <td>Aprobada</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Ingenieria del Software</td>
-                        <td>3</td>
-                        <td>9</td>
-                        <td>Reprobada</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Organización del computador</td>
-                        <td>3</td>
-                        <td>5</td>
-                        <td>En espera</td>
-                    </tr>
-                    </tbody>
-                </Table>
-            </Container>
-        </div>
-    </div>
-);
+      </div>
+    )
+  }
+}
 
-export default Articulo58
+const mapStateToProps = state => {
+  return {
+    student: state.auth,
+    materias: state.materias
+  }
+};
+
+export default connect(mapStateToProps)(Articulo58)
