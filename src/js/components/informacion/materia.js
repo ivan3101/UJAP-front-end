@@ -2,8 +2,8 @@ import React from 'react';
 
 const MateriaRow = props => (
   <tr>
-    <td>{props.nombre}</td>
-    <td>{props.horario[0].profesor}</td>
+    <td>{props.nombre.split('|')[0]}</td>
+    <td>{props.profesor}</td>
     <td>noemail@noemail.com</td>
     <td>Nunca</td>
   </tr>

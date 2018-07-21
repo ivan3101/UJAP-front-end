@@ -130,7 +130,7 @@ class Informacion extends Component {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {this.props.materias.map(materia => (
+                                {!!this.props.horario.length && this.props.horario.map(materia => (
                                   <MateriaRow {...materia} key={uuid.v4()}/>
                                 ))}
                                 </tbody>
@@ -147,7 +147,7 @@ class Informacion extends Component {
 const mapStateToProps = (state) => {
   return {
     auth: state.auth,
-    materias: state.materias
+    horario: state.horario
   }
 };
 

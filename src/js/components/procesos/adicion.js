@@ -34,6 +34,7 @@ class Adicion extends React.Component {
           this.setState((prevState) => ({
             materias: prevState.materias.concat([{
               nombre: materia,
+              profesor: 'Oscar Valdivia',
               horario: [
                 {
                   dia: 'lunes',
@@ -60,6 +61,7 @@ class Adicion extends React.Component {
         this.setState((prevState) => ({
           materias: prevState.materias.concat([{
             nombre: materia,
+            profesor: 'Gabriel Goncalves',
             horario: [
               {
                 dia: 'viernes',
@@ -75,6 +77,7 @@ class Adicion extends React.Component {
         this.setState((prevState) => ({
           materias: prevState.materias.concat([{
             nombre: materia,
+            profesor: 'Alirio Angel',
             horario: [
               {
                 dia: 'martes',
@@ -91,6 +94,7 @@ class Adicion extends React.Component {
           this.setState((prevState) => ({
             materias: prevState.materias.concat([{
               nombre: materia,
+              profesor: 'Juan Ochoa',
               horario: [
                 {
                   dia: 'miercoles',
@@ -145,7 +149,7 @@ class Adicion extends React.Component {
     return(
       <div>
         <div>
-          <h1>Te amo Oscar</h1>
+          <h1>Adicion, cambio y retiro</h1>
         </div>
         <div>
           {this.state.success && (<div className="alert alert-success" role="alert">
