@@ -1,16 +1,20 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
 import authReducer from '../reducers/auth';
 import materiasReducer from '../reducers/materias';
 import horarioReducer from '../reducers/horario';
 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 export default () => {
-  const store = createStore(
+  return createStore(
     combineReducers({
       auth: authReducer,
       materias: materiasReducer,
       horario: horarioReducer
     }),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+   composeEnhancers(
+     applyMiddleware(thunk)
+   )
   );
-  return store;
 };

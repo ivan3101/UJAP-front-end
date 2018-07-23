@@ -1,36 +1,36 @@
 import React from 'react';
-import { Table, Container,  Col } from 'reactstrap';
+import { Table, Container } from 'reactstrap';
 import  './josechaparro.css'
 
 class Historico extends React.Component {
-    
+
 
 
   render() {
       const style = {
         textAlign: 'right',
-        backgroundColor: '#DA1D3C',  
+        backgroundColor: '#DA1D3C',
         color: 'white',
 
       };
 
         const style2 = {
             textAlign: 'center',
-            backgroundColor: '#F2F3F2',  
+            backgroundColor: '#F2F3F2',
             color: 'black',
 
-            };      
+            };
 
         const style3 = {
             textAlign: 'center',
-            backgroundColor: '#6085FE',  
+            backgroundColor: '#6085FE',
             color: 'black',
 
-            };            
+            };
 
     return (
 
-        <Container className="border "> 
+        <Container className="border ">
             <br />
             <Table size="sm" width="100%" className="border">
                 <tr>
@@ -58,7 +58,7 @@ class Historico extends React.Component {
 
                 <br/>
             </Table>
-            
+
 
 
                 <Table style={style3} size="sm" width="100%" className="border">
@@ -107,7 +107,7 @@ class Historico extends React.Component {
 
                 <br/>
             </Table>
-            
+
                 <Table style={style3} size="sm" width="100%" className="border">
                     <tr>
                             <th colspan="1">#</th>
@@ -130,8 +130,8 @@ class Historico extends React.Component {
                             </tr>
                         </tbody>
                 </Table>
-                
-        </Container>   
+
+        </Container>
     );
   }
 }

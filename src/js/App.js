@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import {HashRouter, Redirect, Route, Switch} from 'react-router-dom';
+import React from 'react';
+import {Redirect, Router, Route, Switch} from 'react-router-dom';
 import '../styles/App.css';
 // Styles
 // CoreUI Icons Set
@@ -17,27 +17,23 @@ import '../styles/scss/style.css'
 import { DefaultLayout } from './containers';
 
 // Pages
-import Page404 from './components/Page404';
 import Login from './components/login/login'
 import { connect } from 'react-redux';
-
+import {history} from "./utilities/history";
 
 // import { renderRoutes } from 'react-router-config';
 
 
 const App = (props) => (
-      <HashRouter>
+      <Router history={history}>
         <Switch>
-
-          <Route path={'/login'} name={'Login'} component={Login}/>
+          <Route path={'/login'} exact name={'Login'} component={Login}/>
           <Route path={'/home'} name={'Inicio'} component={DefaultLayout}/>
           <Route exact render={() =>
             !props.auth.isLoggedIn ? (<Redirect to="/login"/>) : (<Redirect to={'/home'}/>)
           } />
-          {/*<Route path={'/'} name={'Inicio'} component={DefaultLayout}/>*/}
-          {/*<Route exact name="Error 404" component={Page404} />*/}
         </Switch>
-      </HashRouter>
+      </Router>
     );
 
 const mapStateToProps = (state) => {

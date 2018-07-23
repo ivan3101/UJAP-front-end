@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Card, CardBody, CardGroup, Col, Container, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 import {connect} from 'react-redux'
-import {loginPersonal, loginProfesor, loginUser} from "../../actions/auth";
-import {materiasLoad} from "../../actions/materias";
+import {loginUser} from "../../actions/auth";
+import {URL_LOGIN_ESTUDIANTE, URL_LOGIN_PROFESOR} from "../../utilities/constants";
 
 class Login extends Component {
 
@@ -10,42 +10,23 @@ class Login extends Component {
     username: '',
     password: '',
     error: false,
-    errorMsg: ''
+    type: 'estudiante'
   };
 
   onLogin = () => {
-    if (this.state.username.charAt(0).toLowerCase() === 'p') {
-      if (this.state.username.toLowerCase() === 'pjpadron17' && this.state.password === '123456') {
-        this.props.dispatch(loginProfesor());
-        this.props.history.push('/');
-      } else {
-        this.setState(() => ({
-          error: true,
-          errorMsg: 'Nombre de usuario o contraseña incorrectos'
-        }))
-      }
-    } else if (this.state.username.charAt(0).toLowerCase() === 'a') {
-      if (this.state.username.toLowerCase() === 'aalirio18' && this.state.password === '123456') {
-        this.props.dispatch(loginPersonal());
-        this.props.history.push('/');
-
-      } else {
-        this.setState(() => ({
-          error: true,
-          errorMsg: 'Nombre de usuario o contraseña incorrectos'
-        }))
-      }
+    const {type} = this.state;
+    if (!this.state.username || !this.state.password) {
+      this.setState(() => ({
+        error: true
+      }));
     } else {
-      if (this.state.username.toLowerCase() === 'idemeneze14' && this.state.password === '123456') {
-        this.props.dispatch(loginUser());
-        this.props.dispatch(materiasLoad());
-        this.props.history.push('/');
-
-      } else {
-        this.setState(() => ({
-          error: true,
-          errorMsg: 'Nombre de usuario o contraseña incorrectos'
-        }))
+      this.setState(() => ({
+        error: false
+      }));
+      if (type === 'profesor') {
+        this.props.dispatch(loginUser(URL_LOGIN_PROFESOR, this.state));
+      } else if (type === 'estudiante') {
+        this.props.dispatch(loginUser(URL_LOGIN_ESTUDIANTE, this.state));
       }
     }
   };
@@ -53,7 +34,7 @@ class Login extends Component {
   onUpdateInput = (event) => {
     const input = event.target;
     this.setState(() => ({
-      [input.name]: input.value
+      [input.name]: input.value.trim()
     }))
   };
 
@@ -69,7 +50,10 @@ class Login extends Component {
                     <h1>Login</h1>
                     <p className="text-muted">Ingresa a tu cuenta</p>
                     {this.state.error && (<div className="alert alert-danger" role="alert">
-                      {this.state.errorMsg}
+                      Debe ingresar un nombre de usuario y contraseña
+                    </div>)}
+                    {this.props.error && (<div className="alert alert-danger" role="alert">
+                      {this.props.errorMsg}
                     </div>)}
                     <InputGroup className="mb-3">
                       <InputGroupAddon addonType="prepend">
@@ -86,6 +70,12 @@ class Login extends Component {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input type="password" placeholder="Contraseña" value={this.state.password} onChange={this.onUpdateInput} name={'password'}/>
+                    </InputGroup>
+                    <InputGroup className={'mb-4'}>
+                      <Input type={'select'} onChange={this.onUpdateInput} name={'type'}>
+                        <option value="estudiante" defaultChecked={true}>Estudiante</option>
+                        <option value="profesor">Profesor</option>
+                      </Input>
                     </InputGroup>
                     <Row>
                       <Col xs="6">
@@ -106,4 +96,11 @@ class Login extends Component {
   }
 }
 
-export default connect()(Login);
+const mapStateToProps = state => {
+  return {
+    error: state.auth.error,
+    errorMsg: state.auth.errorMsg
+  }
+};
+
+export default connect(mapStateToProps)(Login);

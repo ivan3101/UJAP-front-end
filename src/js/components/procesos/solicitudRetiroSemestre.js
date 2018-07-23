@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Table, Container, Row, Col, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Button, InputGroup} from 'reactstrap';
+import React  from 'react';
+import { Table} from 'reactstrap';
 
 
 class SolicitudRetiroSemestre extends React.Component {
-    
+
     constructor(props) {
         super(props);
 
@@ -41,12 +41,12 @@ class SolicitudRetiroSemestre extends React.Component {
                                 <td>1</td>
                                 <td>580.000,00 BSF</td>
                                 <td>07/05/2018</td>
-                                <td>15/05/2018</td> 
+                                <td>15/05/2018</td>
                                 <td className="text-center">
                                     <div class="alert alert-success" role="alert">
                                         <strong>¡PAGADA!</strong>
                                     </div>
-                                </td>                                                                                  
+                                </td>
                             </tr>
                             <tr>
                                 <th>20181CR</th>
@@ -58,7 +58,7 @@ class SolicitudRetiroSemestre extends React.Component {
                                     <div class="alert alert-success" role="alert">
                                         <strong>¡PAGADA!</strong>
                                     </div>
-                                </td>                                                                                     
+                                </td>
                             </tr>
                             <tr>
                                 <th>20181CR</th>
@@ -70,7 +70,7 @@ class SolicitudRetiroSemestre extends React.Component {
                                     <div class="alert alert-danger" role="alert">
                                         <strong>!VENCIDA - PENDIENTE!</strong>
                                     </div>
-                                </td>                                                                                   
+                                </td>
                             </tr>
                             <tr>
                                 <th>20181CR</th>
@@ -82,7 +82,7 @@ class SolicitudRetiroSemestre extends React.Component {
                                     <div class="alert alert-info" role="alert">
                                         <strong>!PENDIENTE!</strong>
                                     </div>
-                                </td>                                                                                   
+                                </td>
                             </tr>
                             <tr>
                                 <th>20181CR</th>
@@ -94,7 +94,7 @@ class SolicitudRetiroSemestre extends React.Component {
                                     <div class="alert alert-info" role="alert">
                                         <strong>!PENDIENTE!</strong>
                                     </div>
-                                </td>                                                                                 
+                                </td>
                             </tr>
                         </tbody>
                     </Table>
@@ -105,11 +105,11 @@ class SolicitudRetiroSemestre extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <button type="button" class="btn btn-success active">Solicitar</button>  
-                </div>         
+                    <button type="button" class="btn btn-success active">Solicitar</button>
+                </div>
             </div>
         );
-    }     
+    }
 }
 
 export default SolicitudRetiroSemestre;

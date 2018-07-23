@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import CountUp from 'react-countup';
 import { Table, Fade } from 'reactstrap';
 
@@ -73,7 +73,7 @@ export default class SituacionAcademica extends React.Component {
 			  <tr>
 				<th scope="row"></th>
 				<td></td>
-				<td> <CountUp start={0} end={16.5} decimals={2} duration={3.75} /> 
+				<td> <CountUp start={0} end={16.5} decimals={2} duration={3.75} />
 				</td>
 				<td> <CountUp start={0} end={32} duration={6} /> </td>
 			  </tr>

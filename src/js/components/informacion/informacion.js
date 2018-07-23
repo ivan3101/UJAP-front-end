@@ -1,12 +1,12 @@
 import React , {Component} from 'react';
-import { Container, Row, Col, Button,Table,Fade } from 'reactstrap';
+import { Container, Row, Col, Table, Fade } from 'reactstrap';
 import {connect} from 'react-redux';
 import MateriaRow from "./materia";
 import uuid from 'uuid';
 
-const marginButtons={
-    margin:"5px",
-};
+// const marginButtons={
+//     margin:"5px",
+// };
 
 const divColored={
     background:"#336699",
@@ -27,17 +27,6 @@ class Informacion extends Component {
                     <Col md="2">
                         <h3>Estudiante</h3>
                     </Col>
-                    <Col md="10">
-                            <Button style={marginButtons} color="primary">Inscripcion</Button>
-
-                            <Button style={marginButtons} color="primary">Adicion,Cambio o Retiro</Button>
-
-                            <Button style={marginButtons} color="primary">Pago Web</Button>
-
-                            <Button style={marginButtons} color="primary">Horario</Button>
-
-                            <Button style={marginButtons} color="primary">Solicitudes</Button>
-                    </Col>
                 </Row>
                 <Row>
                     <Container fluid>
@@ -52,9 +41,9 @@ class Informacion extends Component {
                             </thead>
                             <tbody>
                                 <tr>
-                                   <td>{this.props.auth.nombre}</td>
-                                   <td>{this.props.auth.apellido}</td>
-                                   <td>V - {this.props.auth.cedula}</td>
+                                   <td>{this.props.usuario.nombre}</td>
+                                   <td>{this.props.usuario.apellido}</td>
+                                   <td>V - {this.props.usuario.cedula}</td>
                                 </tr>
 
                             </tbody>
@@ -67,9 +56,9 @@ class Informacion extends Component {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{this.props.auth.semestre}</td>
-                                    <td>{this.props.auth.promedio} pts</td>
-                                    <td>{this.props.auth.uc}</td>
+                                    <td>{this.props.usuario.semestre}</td>
+                                    <td>{this.props.usuario.promedio} pts</td>
+                                    <td>{this.props.usuario.uc}</td>
                                 </tr>
                             </tbody>
                         </Table>
@@ -146,7 +135,7 @@ class Informacion extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    auth: state.auth,
+    usuario: state.auth.usuario,
     horario: state.horario
   }
 };

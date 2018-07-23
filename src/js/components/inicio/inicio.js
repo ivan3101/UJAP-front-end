@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Container, Row, Col, Card,CardBody,CardHeader,Fade } from 'reactstrap';
 import Noticias from './noticias';
-import HistorialNoticias from './historialNoticias';
+import logoPath from '../../../assets/img/brand/logo.png';
+import {connect} from 'react-redux';
 
 const styles={
   // color: "black",
@@ -28,16 +29,16 @@ class Inicio extends Component {
                 <Card style={styles}>
                   <CardHeader style={header}>
                     <h3>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                      Bienvenido a UJAP en linea
                     </h3>
                   </CardHeader>
                   <CardBody>
                     <Row>
-                      <Col md="4">
-                        IMAGEN
+                      <Col md="2">
+                        <img src={logoPath} alt="logo ujap" className="img-fluid"/>
                       </Col>
-                      <Col md="8">
-                        <p className="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </p>
+                      <Col md="10">
+                        <p className="lead">Bienvenido a UJAP en linea {this.props.name}. Tu portal para conocer las ultimas noticias sobre la UJAP y administrar tu vida estudiantil</p>
                       </Col>
                     </Row>
 
@@ -56,4 +57,8 @@ class Inicio extends Component {
   )
 }
 
-export default Inicio;
+const mapStateToProps = state => ({
+  name: `${state.auth.usuario.nombre} ${state.auth.usuario.apellido}`
+});
+
+export default connect(mapStateToProps)(Inicio);

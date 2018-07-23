@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table, Container, Button, Row, Col} from 'reactstrap';
 import {connect} from 'react-redux';
-import uuid from 'uuid';
 
 class Articulo58 extends React.Component {
   state = {

@@ -1,100 +1,34 @@
 import React, {Component} from 'react';
-import {Card, CardBody, CardFooter, CardTitle, CardText, Col,Row, Container, NavLink} from 'reactstrap';
+import {Row, Container} from 'reactstrap';
+import axios from 'axios';
+import Noticia from './noticia';
+import {URL_GET_NOTICIAS} from "../../utilities/constants";
+import uuid from 'uuid';
 
-const cardColor = {
+class Noticias extends Component {
 
-    backgroundColor:'#336699',
-    color:'white',
-  };
-const cardFooter = {
-
-    backgroundColor:'rgb(96,181,254)',
-      textAlign: 'center',
-      color: "white"
+  state = {
+    noticias: []
   };
 
- class Noticias extends Component {
-    render() {
-        return(
+  async componentDidMount() {
+    const response = await axios.get(URL_GET_NOTICIAS);
+    this.setState(() => ({
+      noticias: response.data
+    }));
+  }
 
-                <Container>
-                <Row>
-                    <Col md="4">
-                        <Card style={cardColor}>
-                            <CardBody>
-                                    <CardTitle>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</CardTitle>
-                                <CardText>Publicado el 24/May/2018</CardText>
-                                <small className="icon-eye">{' '}4470{' '}<span className="icon-bubble">{' '}0</span></small>
-                                </CardBody>
-                                <CardFooter style={cardFooter} className="text-muted "><NavLink href="" className="text-light icon-plus"> LEER </NavLink></CardFooter>
-                        </Card>
-                    </Col>
-                    <Col md="4">
-                        <Card style={cardColor}>
-                            <CardBody>
-                                    <CardTitle>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</CardTitle>
-                                <CardText>Publicado el 24/May/2018</CardText>
-                                <small className="icon-eye">{' '}4470{' '}<span className="icon-bubble">{' '}0</span></small>
-                                </CardBody>
-                                <CardFooter style={cardFooter} className="text-muted "><NavLink href="" className="text-light icon-plus"> LEER </NavLink></CardFooter>
-                        </Card>
-                    </Col>
-                    <Col md="4">
-                        <Card style={cardColor}>
-                            <CardBody>
-                                    <CardTitle>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</CardTitle>
-                                <CardText>Publicado el 24/May/2018</CardText>
-                                <small className="icon-eye">{' '}4470{' '}<span className="icon-bubble">{' '}0</span></small>
-                                </CardBody>
-                                <CardFooter style={cardFooter} className="text-muted "><NavLink href="" className="text-light icon-plus"> LEER </NavLink></CardFooter>
-                        </Card>
-                    </Col>
-                    <Col md="4">
-                        <Card style={cardColor}>
-                            <CardBody>
-                                    <CardTitle>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</CardTitle>
-                                <CardText>Publicado el 24/May/2018</CardText>
-                                <small className="icon-eye">{' '}4470{' '}<span className="icon-bubble">{' '}0</span></small>
-                                </CardBody>
-                                <CardFooter style={cardFooter} className="text-muted "><NavLink href="" className="text-light icon-plus"> LEER </NavLink></CardFooter>
-                        </Card>
-                    </Col>
-                    <Col md="4">
-                        <Card style={cardColor}>
-                            <CardBody>
-                                    <CardTitle>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</CardTitle>
-                                <CardText>Publicado el 24/May/2018</CardText>
-                                <small className="icon-eye">{' '}4470{' '}<span className="icon-bubble">{' '}0</span></small>
-                                </CardBody>
-                                <CardFooter style={cardFooter} className="text-muted "><NavLink href="" className="text-light icon-plus"> LEER </NavLink></CardFooter>
-                        </Card>
-                    </Col>
-                    <Col md="4">
-                        <Card style={cardColor}>
-                            <CardBody>
-                                    <CardTitle>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</CardTitle>
-                                <CardText>Publicado el 24/May/2018</CardText>
-                                <small className="icon-eye">{' '}4470{' '}<span className="icon-bubble">{' '}0</span></small>
-                                </CardBody>
-                                <CardFooter style={cardFooter} className="text-muted "><NavLink href="" className="text-light icon-plus"> LEER </NavLink></CardFooter>
-                        </Card>
-                    </Col>
-                    <Col md="4">
-                        <Card style={cardColor}>
-                            <CardBody>
-                                    <CardTitle>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore</CardTitle>
-                                <CardText>Publicado el 24/May/2018</CardText>
-                                <small className="icon-eye">{' '}4470{' '}<span className="icon-bubble">{' '}0</span></small>
-                                </CardBody>
-                                <CardFooter style={cardFooter} className="text-muted "><NavLink href="" className="text-light icon-plus"> LEER </NavLink></CardFooter>
-                        </Card>
-                    </Col>
+  render() {
+    return(
+      <Container>
+        <Row>
+          {this.state.noticias.map(noticia => (<Noticia titulo={noticia.titulo} cuerpo={noticia.cuerpo} fecha={noticia.fecha} key={uuid.v4()}/>))}
         </Row>
-        </Container>
+      </Container>
 
-        )
+    )
 
-    }
+  }
 }
 
 export default Noticias;
