@@ -2,9 +2,9 @@ import React from 'react';
 
 const MateriaRow = props => (
   <tr>
-    <td>{props.nombre.split('|')[0]}</td>
+    <td>{props.materia}</td>
     <td>{props.profesor}</td>
-    <td>noemail@noemail.com</td>
+    <td>{props.email}</td>
     <td>Nunca</td>
   </tr>
 );

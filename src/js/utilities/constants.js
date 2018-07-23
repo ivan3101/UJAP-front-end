@@ -5,3 +5,5 @@ export const URL_LOGIN_ESTUDIANTE = `${BASE_URL}/usuarios/login`;
 export const URL_LOGIN_PROFESOR = `${BASE_URL}/profesores/login`;
 
 export const URL_GET_NOTICIAS = `${BASE_URL}/noticias`;
+
+export const URL_HORARIO = id => `${BASE_URL}/usuarios/${id}/horario`;
