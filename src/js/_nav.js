@@ -12,6 +12,35 @@ export default {
     },
     {
       title: true,
+      name: 'Procesos',
+      wrapper: {
+        element: '',
+        attributes: {},
+      },
+    },
+    {
+      name: 'Inscripcion academica',
+      url: '/home/procesos/INGRESAURL',
+      icon: 'icon-puzzle',
+    },
+    {
+      name: 'Adicion, cambio o retiro',
+      url: '/home/procesos/adicion',
+      icon: 'icon-puzzle',
+    },
+    {
+      name: 'Retiro academico',
+      url: '/home/procesos/ret-acad',
+      icon: 'icon-puzzle',
+    },
+    {
+      name: 'Solicitud de retiro del semestre',
+      url: '/home/procesos/sol-ret-sem',
+      icon: 'icon-puzzle',
+    },
+
+    {
+      title: true,
       name: 'Solicitudes',
       wrapper: {            // optional wrapper object
         element: '',        // required valid HTML5 element tag
@@ -29,34 +58,7 @@ export default {
       url: '/home/solicitudes/peticionEst',
       icon: 'icon-pencil',
     },
-    {
-      title: true,
-      name: 'Procesos',
-      wrapper: {
-        element: '',
-        attributes: {},
-      },
-    },
-    {
-      name: 'Inscripcion academica',
-      url: '/home/procesos/INGRESAURL',
-      icon: 'icon-puzzle',
-    },
-    {
-      name: 'Retiro academico',
-      url: '/home/procesos/ret-acad',
-      icon: 'icon-puzzle',
-    },
-    {
-      name: 'Adicion, cambio o retiro',
-      url: '/home/procesos/adicion',
-      icon: 'icon-puzzle',
-    },
-    {
-      name: 'Solicitud de retiro del semestre',
-      url: '/home/procesos/sol-ret-sem',
-      icon: 'icon-puzzle',
-    },
+
     {
       title: true,
       name: 'Consultas',
