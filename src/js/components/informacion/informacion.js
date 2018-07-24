@@ -49,8 +49,7 @@ class Informacion extends Component {
           </Row>
           <Row>
             <Container fluid>
-              <div style={divColored}></div>
-              <Table striped bordered style={tableStyle}>
+              <Table bordered responsive style={{backgroundColor: 'white'}}>
                 <thead>
                 <tr>
                   <th>Nombre</th>
@@ -89,7 +88,7 @@ class Informacion extends Component {
               <Row>
                 <Col md="2"><h3>Semestre</h3></Col>
               </Row>
-              <Table striped bordered style={tableStyle}>
+              <Table bordered responsive style={{backgroundColor: 'white'}}>
                 <thead>
                 <tr>
                   <th>Costo Semestre</th>
@@ -128,7 +127,7 @@ class Informacion extends Component {
               <Row>
                 <Col md="2"><h3>Materias</h3></Col>
               </Row>
-              <Table striped bordered style={tableStyle}>
+              <Table striped bordered responsive style={{backgroundColor: 'white'}}>
                 <thead>
                 <tr>
                   <th>Materia</th>

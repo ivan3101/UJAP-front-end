@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { DropdownMenu, DropdownToggle, Nav } from 'reactstrap';
 import PropTypes from 'prop-types';
-
+import {connect} from 'react-redux';
 import { AppAsideToggler, AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
-import logo from '../../../assets/img/brand/logo.svg'
+import logo from '../../../assets/img/brand/logo.png'
 import sygnet from '../../../assets/img/brand/sygnet.svg'
 
 const propTypes = {
@@ -23,14 +23,15 @@ class DefaultHeader extends Component {
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
         <AppSidebarToggler className="d-md-down-none" display="lg" />
         <AppNavbarBrand
-          full={{ src: logo, width: 89, height: 25, alt: 'Logo' }}
+          full={{ src: logo, width: 35, height: 40, alt: 'Logo' }}
           minimized={{ src: sygnet, width: 30, height: 30, alt: 'Logo' }}
         />
 
         <Nav className="ml-auto" navbar>
           <AppHeaderDropdown direction="down">
             <DropdownToggle nav>
-              <img src={'assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+              <h5>{this.props.name}</h5>
+              {/*<img src={'assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />*/}
             </DropdownToggle>
             <DropdownMenu right style={{ right: 'auto' }}>
               {/*<DropdownItem header tag="div" className="text-center"><strong>Account</strong></DropdownItem>*/}
@@ -59,4 +60,8 @@ class DefaultHeader extends Component {
 DefaultHeader.propTypes = propTypes;
 DefaultHeader.defaultProps = defaultProps;
 
-export default DefaultHeader;
+const mapStateToProps = state => ({
+  name: `${state.auth.usuario.nombre} ${state.auth.usuario.apellido}`
+});
+
+export default connect(mapStateToProps)(DefaultHeader);
