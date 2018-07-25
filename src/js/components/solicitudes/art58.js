@@ -113,7 +113,7 @@ class Articulo58 extends React.Component {
               <th>Cedula</th>
               <td>{this.props.usuario.cedula}</td>
               <th>Carrera</th>
-              <td>{this.props.usuario.carrera}</td>
+              <td>{this.props.usuario.carrera.nombre}</td>
 
             </tr>
             <tr>

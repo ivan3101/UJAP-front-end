@@ -20,7 +20,7 @@ export default {
     },
     {
       name: 'Inscripcion academica',
-      url: '/home/procesos/INGRESAURL',
+      url: '/home/procesos/inscripcion',
       icon: 'icon-puzzle',
     },
     {
@@ -58,7 +58,11 @@ export default {
       url: '/home/solicitudes/peticionEst',
       icon: 'icon-pencil',
     },
-
+    {
+      name: 'Servicio Comunitario',
+      url: '/home/solicitudes/servicio-comunitario',
+      icon: 'icon-pencil'
+    },
     {
       title: true,
       name: 'Consultas',

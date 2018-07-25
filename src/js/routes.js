@@ -21,6 +21,11 @@ const Informacion = Loadable({
   loading: Loading,
 });
 
+const Inscripcion = Loadable({
+  loader: () => import('./components/procesos/inscripcion'),
+  loading: Loading
+});
+
 const HorarioSeccion = Loadable({
   loader: () => import('./components/datos-academicos/horario-seccion'),
   loading:Loading,
@@ -73,22 +78,29 @@ const Articulo58 = Loadable({
   loading: Loading
 });
 
+const ServicioComunitario = Loadable({
+  loader: () => import('./components/solicitudes/servicio'),
+  loading: Loading
+});
+
 const routes = [
   { path: '/home', exact: true, name: 'Home', component: DefaultLayout },
   { path: '/login', name: 'Login', component: Login },
   { path: '/home/inicio', name: 'Inicio', component: Inicio },
+  { path: '/home/informacion', name: 'Informacion', component: Informacion },
+  { path: '/home/procesos/inscripcion', name: 'Inscripcion', component: Inscripcion},
+  { path: '/home/procesos/ret-acad', name: 'RetiroAcademico', component: RetiroAcademico },
+  { path: '/home/procesos/adicion', name: 'Adicion', component: Adicion },
+  { path: '/home/procesos/sol-ret-sem', name: 'SolicitudRetiroSemestre', component: SolicitudRetiroSemestre },
   {path:'/home/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
   {path:'/home/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
   {path:'/home/datos/situacion-academico', name:'Situacion Academica', component:SituacionAcademico},
   {path:'/home/datos/situacion-academico1', name:'Situacion Academica', component:SituacionAcademico1},
   {path:'/home/datos/historico-administrativo', name:'Historico Administrativo', component:HistoricoAdministrativo},
-  { path: '/home/procesos/ret-acad', name: 'RetiroAcademico', component: RetiroAcademico },
-  { path: '/home/procesos/adicion', name: 'Adicion', component: Adicion },
-  { path: '/home/procesos/sol-ret-sem', name: 'SolicitudRetiroSemestre', component: SolicitudRetiroSemestre },
-  { path: '/home/informacion', name: 'Informacion', component: Informacion },
   { path:'/home/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion },
   { path: '/home/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil },
-  { path: '/home/solicitudes/articulo-58', name: 'Articulo 58', component: Articulo58}
+  { path: '/home/solicitudes/articulo-58', name: 'Articulo 58', component: Articulo58},
+  { path: '/home/solicitudes/servicio-comunitario', name: 'Servicio Comunitario', component: ServicioComunitario}
 ];
 
 export default routes;

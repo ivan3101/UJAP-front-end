@@ -30,9 +30,11 @@ class Informacion extends Component {
     const usuario = this.props.usuario;
     try {
       const response = await axios.get(URL_HORARIO(usuario._id));
-      this.setState(() => ({
-        materias: response.data.materias
-      }));
+      if (response.data) {
+        this.setState(() => ({
+          materias: response.data.materias
+        }));
+      }
     } catch (e) {
       console.log(e);
     }

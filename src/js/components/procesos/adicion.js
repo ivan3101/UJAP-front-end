@@ -1,178 +1,230 @@
-import React from 'react';
-import { Table, DropdownToggle, DropdownMenu, DropdownItem, Button, Dropdown} from 'reactstrap';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {horarioLoad} from "../../actions/horario";
-import {ratificar} from "../../actions/auth";
+import axios from 'axios';
+import {URL_HORARIO, URL_MATERIAS_DISPONIBLES} from "../../utilities/constants";
+import {Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Table, Button, Row, Col} from 'reactstrap';
+import uuid from 'uuid';
+import moment from 'moment';
+import {path} from 'ramda';
 
-class Adicion extends React.Component {
+class Adicion extends Component {
   state = {
-    dropdownOpen: false,
-    selected: '',
-    materias: this.props.horario,
+    horario: [],
+    disponibles: [],
+    materiaSelected: {
+      materia: '',
+      nombre: '',
+      seccion: []
+    },
+    inscrito: false,
+    seccionSelected: '',
+    sent: false,
     error: false,
     errorMsg: '',
-    success: false
+    dropdownMaterias: false,
+    dropdownSeccion: false
   };
 
-  toggle = () => {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-    });
-  };
-
-  changeValue = e => {
-    this.setState({
-      selected: e.currentTarget.textContent
-    })
-  };
-
-  onAddMateria = () => {
-    const materia = this.state.selected;
-    if (this.state.materias.findIndex(m => m.nombre === materia) === -1) {
-      if (materia === 'Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am') {
-        if (this.state.materias.findIndex(m => m.nombre === 'Sistemas de Informacion II 308c1 | Miercoles 07:45 - 09:25am') === -1) {
-          this.setState((prevState) => ({
-            materias: prevState.materias.concat([{
-              nombre: materia,
-              profesor: 'Oscar Valdivia',
-              horario: [
-                {
-                  dia: 'lunes',
-                  inicio: '7:00',
-                  fin: '8:30'
-                },
-                {
-                  dia: 'miercoles',
-                  inicio: '7:00',
-                  fin: '8:30'
-                }
-              ]
-            }]),
-            selected: '',
-            error: false
+  async componentDidMount() {
+    const usuario = this.props.usuario;
+    try {
+      const response = await axios.get(URL_HORARIO(usuario._id));
+      if (response.data) {
+        this.setState(() => ({
+          horario: response.data.materias.map(materia => ({
+            materia: materia.materia._id,
+            nombre: materia.materia.nombre,
+            seccion: materia.seccion,
+            bloques: materia.bloques,
+            profesor: materia.profesor._id
           }))
-        } else {
+        }));
+        if (response.data.modificado) {
           this.setState(() => ({
             error: true,
-            errorMsg: 'Esta materia entra en conflicto con Sistemas de Informacion 2'
-          }))
-        }
-      } else if (materia === 'Electiva II Computacion Emergente 309c1 | Viernes 10:20 - 11:50am') {
-        this.setState((prevState) => ({
-          materias: prevState.materias.concat([{
-            nombre: materia,
-            profesor: 'Gabriel Goncalves',
-            horario: [
-              {
-                dia: 'viernes',
-                inicio: '10:20',
-                fin: '11:50'
-              }
-            ]
-          }]),
-          selected: '',
-          error: false
-        }))
-      } else if (materia === 'Control de Proyecto 309c1 | Martes 08:40 - 10:10am') {
-        this.setState((prevState) => ({
-          materias: prevState.materias.concat([{
-            nombre: materia,
-            profesor: 'Alirio Angel',
-            horario: [
-              {
-                dia: 'martes',
-                inicio: '8:40',
-                fin: '10:10'
-              },
-            ]
-          }]),
-          selected: '',
-          error: false
-        }))
-      } else if (materia === 'Sistemas de Informacion II 308c1 | Miercoles 07:45 - 09:25am') {
-        if (this.state.materias.findIndex(m => m.nombre === 'Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am') === -1) {
-          this.setState((prevState) => ({
-            materias: prevState.materias.concat([{
-              nombre: materia,
-              profesor: 'Juan Ochoa',
-              horario: [
-                {
-                  dia: 'miercoles',
-                  inicio: '7:45',
-                  fin: '8:30'
-                }
-              ]
-            }]),
-            selected: '',
-            error: false
-          }))
-        } else {
-          this.setState(() => ({
-            error: true,
-            errorMsg: 'Esta materia entra en conflicto con Interfaces con el Usuario'
+            errorMsg: 'Usted ya ratifico sus modificaciones. No puede volver a hacerlo',
+            inscrito: true
           }))
         }
       }
-    } else {
+      const response2 = await axios.get(URL_MATERIAS_DISPONIBLES(usuario.semestre, usuario.carrera._id));
+      this.setState(() => ({
+        disponibles: response2.data
+      }))
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  toggle = dropdown => {
+    this.setState({
+      [dropdown]: !this.state[dropdown]
+    });
+  };
+
+  changeMateria = e => {
+    const event = e.currentTarget;
+    this.setState(prevState => {
+      const seccion = prevState.disponibles.find(materia => materia._id === event.value).horario.map(horario => horario.seccion);
+      return {
+        materiaSelected: {
+          materia: event.value,
+          nombre: event.innerText,
+          seccion
+        },
+        seccionSelected: ''
+      }
+    })
+  };
+
+  changeSeccion = e => {
+    const seccionSelected = e.currentTarget.innerText;
+    this.setState(() => ({
+      seccionSelected
+    }));
+  };
+
+  onAddMateria = () => {
+    let coincidence = this.state.horario.findIndex(materia => {
+      let condicion;
+      for (let bloque of materia.bloques) {
+        const inicioAg = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+        const bloques = this.state.disponibles.find(materia => materia._id === this.state.materiaSelected.materia).horario.find(bloque => bloque.seccion === this.state.seccionSelected).bloque.slice(0);
+        for (let bloque2 of bloques) {
+          const inicio = moment(moment(bloque2.inicio).format('h:mm a'), 'h:mm a');
+          condicion = inicio.isSameOrAfter(inicioAg) && bloque.dia === bloque2.dia;
+        }
+      }
+      return condicion;
+    });
+    if (this.state.horario.findIndex(materia => materia.materia === this.state.materiaSelected.materia) !== -1) {
       this.setState(() => ({
         error: true,
-        errorMsg: 'Esa materia ya se encuentra agregada'
+        errorMsg: 'Esta materia ya se encuentra en su horario. Escoja otra materia o retirela antes de cambiar de seccion'
       }))
+    } else if (coincidence !== -1 ) {
+      this.setState(() => ({
+        error: true,
+        errorMsg: `No puede agregar esta seccion porque coincide con otra materia`
+      }));
+    } else {
+      this.setState(prevState => {
+        const bloques = prevState.disponibles.find(materia => materia._id === prevState.materiaSelected.materia).horario.find(bloques => bloques.seccion === prevState.seccionSelected).bloque.slice(0);
+        const profesor = prevState.disponibles.find(materia => materia._id === prevState.materiaSelected.materia).horario.find(horario => horario.seccion === prevState.seccionSelected).profesor;
+        return {
+          horario: [
+            ...prevState.horario,
+            {
+              ...prevState.materiaSelected,
+              seccion: prevState.seccionSelected,
+              profesor,
+              bloques
+            }
+          ],
+          error: false,
+          errorMsg: '',
+          materiaSelected: {
+            materia: '',
+            nombre: '',
+            seccion: []
+          },
+          seccionSelected: ''
+        };
+      })
     }
   };
 
   onRemoveMateria = () => {
-    const materia = this.state.selected;
-    if (this.state.materias.findIndex(m => m.nombre === materia) !== -1) {
+    const index = this.state.horario.findIndex(materia => materia.materia === this.state.materiaSelected.materia);
+    if (index !== -1) {
       this.setState(prevState => ({
-        materias: prevState.materias.filter(m => m.nombre !== materia),
-        selected: '',
-        error: false
+        horario: prevState.horario.filter(materia => materia.materia !== this.state.materiaSelected.materia),
+        error: false,
+        erroMsg: ''
       }))
     } else {
       this.setState(() => ({
         error: true,
-        errorMsg: 'Esa materia no se encuentra agregada'
+        errorMsg: 'No puede remover esta materia porque aun no ha sido agrega a su horario'
       }))
     }
   };
 
-  onRatificate = () => {
-    this.props.dispatch(horarioLoad(this.state.materias));
-    this.props.dispatch(ratificar());
-    this.setState(() => ({
-      success: true
-    }))
+  onRatificate = async () => {
+    try {
+      const usuario = this.props.usuario;
+      axios.patch(`${URL_HORARIO(usuario._id, '20181CR')}&tipo=acr`, {
+        materias: this.state.horario
+      });
+      this.setState(() => ({
+        sent: true,
+        error: false,
+        errorMsg: '',
+        inscrito: true
+      }))
+    } catch (e) {
+      console.log(e);
+    }
   };
 
+  addRow = path(['nombre']);
+
   render() {
-    return(
+
+    return (
       <div>
         <div>
-          <h1>Adicion, cambio y retiro</h1>
+          <h1>Inscripcion</h1>
         </div>
         <div>
-          {this.state.success && (<div className="alert alert-success" role="alert">
-            Horario ratificado correctamente
+          {this.state.sent && (<div className="alert alert-success" role="alert">
+            Cambios ratificados correctamente
           </div>)}
-          {!this.state.success && this.props.ratificado && (<div className="alert alert-primary" role="alert">
-            Usted ya ratifico los cambios
+          {this.state.error && (<div className="alert alert-danger" role="alert">
+            {this.state.errorMsg}
           </div>)}
-          <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} setActiveFromChild={true}>
-            <DropdownToggle caret>{this.state.selected ? this.state.selected : 'Seleccione una materia'}</DropdownToggle>
-            <DropdownMenu >
-              <DropdownItem onClick={this.changeValue} active={this.state.selected === 'Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am'}>Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am</DropdownItem>
-              <DropdownItem onClick={this.changeValue} active={this.state.selected === 'Electiva II Computacion Emergente 309c1 | Viernes 10:20 - 11:50am'}>Electiva II Computacion Emergente 309c1 | Viernes 10:20 - 11:50am</DropdownItem>
-              <DropdownItem onClick={this.changeValue} active={this.state.selected === 'Control de Proyecto 309c1 | Martes 08:40 - 10:10am'}>Control de Proyecto 309c1 | Martes 08:40 - 10:10am</DropdownItem>
-              <DropdownItem onClick={this.changeValue} active={this.state.selected === 'Sistemas de Informacion II 308c1 | Miercoles 07:45 - 09:25am'}>Sistemas de Informacion II 308c1 | Miercoles 07:45 - 09:25am</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+          <Row>
+            <Col md={{size: 2, offset: 2}}>
+              <Dropdown isOpen={this.state.dropdownMaterias} toggle={() => this.toggle('dropdownMaterias')}>
+                <DropdownToggle caret>{this.state.materiaSelected.nombre ? this.state.materiaSelected.nombre : 'Seleccione una materia'}</DropdownToggle>
+                <DropdownMenu>
+                  {
+                    this.state.disponibles.map(materia => (
+                      <DropdownItem onClick={this.changeMateria} active={this.state.materiaSelected.materia === materia._id} value={materia._id} key={materia._id}>{materia.nombre}</DropdownItem>
+                    ))
+                  }
+                </DropdownMenu>
+              </Dropdown>
+            </Col>
+            <Col md={{size: 2, offset: 3}}>
+              <Dropdown isOpen={this.state.dropdownSeccion} toggle={() => this.toggle('dropdownSeccion')} disabled={Object.is(this.state.materiaSelected, {})}>
+                <DropdownToggle caret>{this.state.seccionSelected ? this.state.seccionSelected : 'Seleccione una seccion'}</DropdownToggle>
+                <DropdownMenu>
+                  {
+                    this.state.materiaSelected.seccion.map(seccion => (
+                      <DropdownItem onClick={this.changeSeccion} active={this.state.seccionSelected === seccion} key={uuid.v4()}>{seccion}</DropdownItem>
+                    ))
+                  }
+                </DropdownMenu>
+              </Dropdown>
+            </Col>
+          </Row>
         </div>
-        {
-          this.state.error && (<div className="alert alert-danger" role="alert">
-          {this.state.errorMsg}
-        </div>)
-        }
+        <div>
+          <br/>
+          <Row>
+            <Col>
+              <Button color="primary" onClick={this.onAddMateria} block disabled={!this.state.materiaSelected.materia === '' || !this.state.seccionSelected || this.state.inscrito} color={(!this.state.materiaSelected.materia === '' || !this.state.seccionSelected || this.state.inscrito)? 'danger': 'primary'}>Agregar materia</Button>
+            </Col>
+            <Col>
+              <Button color="primary" onClick={this.onRemoveMateria} block disabled={!this.state.materiaSelected.materia === '' || this.state.inscrito || this.state.horario.findIndex(materia => materia.materia === this.state.materiaSelected.materia) === -1} color={(!this.state.materiaSelected.materia === '' || this.state.inscrito || this.state.horario.findIndex(materia => materia.materia === this.state.materiaSelected.materia) === -1)? 'danger': 'primary'}>Retirar materia</Button>
+            </Col>
+            <Col>
+              <Button  color="primary" onClick={this.onRatificate} block disabled={!this.state.horario.length || this.state.inscrito} color={(!this.state.horario.length || this.state.inscrito)? 'danger' : 'primary'}>Ratificar</Button>
+            </Col>
+          </Row>
+        </div>
+        <br/>
         <Table bordered responsive style={{backgroundColor: 'white'}}>
           <thead>
           <tr className="tableHorario">
@@ -187,76 +239,1886 @@ class Adicion extends React.Component {
           </thead>
           <tbody>
           <tr>
-            <th scope="row">de 07:00 hasta 07:45 am</th>
-            <td>{this.state.materias.findIndex(m => m.nombre === 'Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am') !== -1 && 'Interfaces con el Usuario'}</td>
-            <td></td>
-            <td>{this.state.materias.findIndex(m => m.nombre === 'Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am') !== -1 && 'Interfaces con el Usuario'}</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <th scope="row">de 07:00 am hasta 07:45 am</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:00 am', 'h:mm a');
+                      const end = moment('7:45 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true;
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:00 am', 'h:mm a');
+                      const end = moment('7:45 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:00 am', 'h:mm a');
+                      const end = moment('7:45 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:00 am', 'h:mm a');
+                      const end = moment('7:45 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:00 am', 'h:mm a');
+                      const end = moment('7:45 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:00 am', 'h:mm a');
+                      const end = moment('7:45 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
           </tr>
           <tr>
-            <th scope="row">de 07:45 hasta 08:30 am</th>
-            <td>{this.state.materias.findIndex(m => m.nombre === 'Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am') !== -1 && 'Interfaces con el Usuario'}</td>
-            <td></td>
-            <td>{this.state.materias.findIndex(m => m.nombre === 'Interfaces con el Usuario 308c1 | Lunes 07:00 - 08:30am/ Miercoles 07:00 - 08:30am') !== -1 && 'Interfaces con el Usuario'} {this.state.materias.findIndex(m => m.nombre === 'Sistemas de Informacion II 308c1 | Miercoles 07:45 - 09:25am') !== -1 && 'Sistemas de Informacion II'}</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <th scope="row">de 07:50 am hasta 08:35 am</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:50 am', 'h:mm a');
+                      const end = moment('8:35 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:50 am', 'h:mm a');
+                      const end = moment('8:35 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:50 am', 'h:mm a');
+                      const end = moment('8:35 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:50 am', 'h:mm a');
+                      const end = moment('8:35 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:50 am', 'h:mm a');
+                      const end = moment('8:35 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:50 am', 'h:mm a');
+                      const end = moment('8:35 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
           </tr>
           <tr>
-            <th scope="row">de 08:40 hasta 09:25 am</th>
-            <td></td>
-            <td>{this.state.materias.findIndex(m => m.nombre === 'Control de Proyecto 309c1 | Martes 08:40 - 10:10am') !== -1 && 'Control de Proyecto'}</td>
-            <td>{this.state.materias.findIndex(m => m.nombre === 'Sistemas de Informacion II 308c1 | Miercoles 07:45 - 09:25am') !== -1 && 'Sistemas de Informacion II'}</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <th scope="row">de 08:40 am hasta 09:25 am</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('8:40 am', 'h:mm a');
+                      const end = moment('9:25 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('8:40 am', 'h:mm a');
+                      const end = moment('9:25 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('8:40 am', 'h:mm a');
+                      const end = moment('9:25 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('8:40 am', 'h:mm a');
+                      const end = moment('9:25 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('8:40 am', 'h:mm a');
+                      const end = moment('9:25 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('8:40 am', 'h:mm a');
+                      const end = moment('9:25 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
           </tr>
           <tr>
-            <th scope="row">de 09:25  hasta 10:10 am</th>
-            <td></td>
-            <td>{this.state.materias.findIndex(m => m.nombre === 'Control de Proyecto 309c1 | Martes 08:40 - 10:10am') !== -1 && 'Control de Proyecto'}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <th scope="row">de 09:30 am hasta 10:15 am</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('9:30 am', 'h:mm a');
+                      const end = moment('10:15 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('9:30 am', 'h:mm a');
+                      const end = moment('10:15 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('9:30 am', 'h:mm a');
+                      const end = moment('10:15 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('9:30 am', 'h:mm a');
+                      const end = moment('10:15 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('9:30 am', 'h:mm a');
+                      const end = moment('10:15 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('9:30 am', 'h:mm a');
+                      const end = moment('10:15 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
           </tr>
           <tr>
-            <th scope="row">de 10:20  hasta 11:05 am</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>{this.state.materias.findIndex(m => m.nombre === 'Electiva II Computacion Emergente 309c1 | Viernes 10:20 - 11:50am') !== -1 && 'Electiva II Computacion Emergente'}</td>
-            <td></td>
+            <th scope="row">de 10:20 am hasta 11:05 am</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('10:20 am', 'h:mm a');
+                      const end = moment('11:05 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('10:20 am', 'h:mm a');
+                      const end = moment('11:05 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('10:20 am', 'h:mm a');
+                      const end = moment('11:05 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('10:20 am', 'h:mm a');
+                      const end = moment('11:05 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('10:20 am', 'h:mm a');
+                      const end = moment('11:05 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('10:20 am', 'h:mm a');
+                      const end = moment('11:05 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
           </tr>
           <tr>
-            <th scope="row">de 11:05 hasta 11:50 am</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>{this.state.materias.findIndex(m => m.nombre === 'Electiva II Computacion Emergente 309c1 | Viernes 10:20 - 11:50am') !== -1 && 'Electiva II Computacion Emergente'}</td>
-            <td></td>
+            <th scope="row">de 11:10 am hasta 11:55 am</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('11:10 am', 'h:mm a');
+                      const end = moment('11:55 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && final.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('11:10 am', 'h:mm a');
+                      const end = moment('11:55 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('11:10 am', 'h:mm a');
+                      const end = moment('11:55 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && final.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('11:10 am', 'h:mm a');
+                      const end = moment('11:55 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && final.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('11:10 am', 'h:mm a');
+                      const end = moment('11:55 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('11:10 am', 'h:mm a');
+                      const end = moment('11:55 am', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 12:00 pm hasta 12:45 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:00 pm', 'h:mm a');
+                      const end = moment('12:45 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:00 pm', 'h:mm a');
+                      const end = moment('12:45 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:00 pm', 'h:mm a');
+                      const end = moment('12:45 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:00 pm', 'h:mm a');
+                      const end = moment('12:45 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:00 pm', 'h:mm a');
+                      const end = moment('12:45 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:00 pm', 'h:mm a');
+                      const end = moment('12:45 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 12:50 pm hasta 01:35 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:50 pm', 'h:mm a');
+                      const end = moment('1:35 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:50 pm', 'h:mm a');
+                      const end = moment('1:35 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:50 pm', 'h:mm a');
+                      const end = moment('1:35 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:50 pm', 'h:mm a');
+                      const end = moment('1:35 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:50 pm', 'h:mm a');
+                      const end = moment('1:35 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('12:50 pm', 'h:mm a');
+                      const end = moment('1:35 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 1:40 pm hasta 02:25 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('1:40 pm', 'h:mm a');
+                      const end = moment('2:25 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('1:40 pm', 'h:mm a');
+                      const end = moment('2:25 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('1:40 pm', 'h:mm a');
+                      const end = moment('2:25 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('1:40 pm', 'h:mm a');
+                      const end = moment('2:25 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('1:40 pm', 'h:mm a');
+                      const end = moment('2:25 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('1:40 pm', 'h:mm a');
+                      const end = moment('2:25 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 02:25 pm hasta 03:10 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('2:25 pm', 'h:mm a');
+                      const end = moment('3:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('2:25 pm', 'h:mm a');
+                      const end = moment('3:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('2:25 pm', 'h:mm a');
+                      const end = moment('3:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('2:25 pm', 'h:mm a');
+                      const end = moment('3:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('2:25 pm', 'h:mm a');
+                      const end = moment('3:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('2:25 pm', 'h:mm a');
+                      const end = moment('3:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 03:15 pm hasta 04:00 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('3:15 pm', 'h:mm a');
+                      const end = moment('4:00 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('3:15 pm', 'h:mm a');
+                      const end = moment('4:00 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('3:15 pm', 'h:mm a');
+                      const end = moment('4:00 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('3:15 pm', 'h:mm a');
+                      const end = moment('4:00 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('3:15 pm', 'h:mm a');
+                      const end = moment('4:00 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('3:15 pm', 'h:mm a');
+                      const end = moment('4:00 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 04:05 pm hasta 04:50 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:05 pm', 'h:mm a');
+                      const end = moment('4:50 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:05 pm', 'h:mm a');
+                      const end = moment('4:50 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:05 pm', 'h:mm a');
+                      const end = moment('4:50 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:05 pm', 'h:mm a');
+                      const end = moment('4:50 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:05 pm', 'h:mm a');
+                      const end = moment('4:50 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:05 pm', 'h:mm a');
+                      const end = moment('4:50 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 04:55 pm hasta 05:40 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:55 pm', 'h:mm a');
+                      const end = moment('5:40 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:55 pm', 'h:mm a');
+                      const end = moment('5:40 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:55 pm', 'h:mm a');
+                      const end = moment('5:40 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:55 pm', 'h:mm a');
+                      const end = moment('5:40 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:55 pm', 'h:mm a');
+                      const end = moment('5:40 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('4:55 pm', 'h:mm a');
+                      const end = moment('5:40 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 05:45 pm hasta 06:30 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('5:45 pm', 'h:mm a');
+                      const end = moment('6:30 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('5:45 pm', 'h:mm a');
+                      const end = moment('6:30 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('5:45 pm', 'h:mm a');
+                      const end = moment('6:30 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('5:45 pm', 'h:mm a');
+                      const end = moment('6:30 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('5:45 pm', 'h:mm a');
+                      const end = moment('6:30 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('5:45 pm', 'h:mm a');
+                      const end = moment('6:30 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 06:35 pm hasta 07:20 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('6:35 pm', 'h:mm a');
+                      const end = moment('7:20 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('6:35 pm', 'h:mm a');
+                      const end = moment('7:20 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('6:35 pm', 'h:mm a');
+                      const end = moment('7:20 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('6:35 pm', 'h:mm a');
+                      const end = moment('7:20 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('6:35 pm', 'h:mm a');
+                      const end = moment('7:20 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('6:35 pm', 'h:mm a');
+                      const end = moment('7:20 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+          </tr>
+          <tr>
+            <th scope="row">de 07:25 pm hasta 08:10 pm</th>
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Lunes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:25 pm', 'h:mm a');
+                      const end = moment('8:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Martes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:25 pm', 'h:mm a');
+                      const end = moment('8:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Miercoles') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:25 pm', 'h:mm a');
+                      const end = moment('8:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Jueves') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:25 pm', 'h:mm a');
+                      const end = moment('8:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Viernes') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:25 pm', 'h:mm a');
+                      const end = moment('8:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
+            {
+              <td>{
+                this.addRow(this.state.horario.find(materia => {
+                  let condition = false;
+                  for (let bloque of materia.bloques) {
+                    if (bloque.dia === 'Sabado') {
+                      const inicio = moment(moment(bloque.inicio).format('h:mm a'), 'h:mm a');
+                      const final = moment(moment(bloque.fin).format('h:mm a'), 'h:mm a');
+                      const begin = moment('7:25 pm', 'h:mm a');
+                      const end = moment('8:10 pm', 'h:mm a');
+                      if ((inicio.isSameOrAfter(begin) && inicio.isSameOrBefore(end)) || (final.isSameOrAfter(begin) && inicio.isSameOrBefore(end))) {
+                        condition = true
+                      }
+                    }
+                  }
+                  return condition
+                }))
+              }</td>
+            }
           </tr>
           </tbody>
         </Table>
-        <div>
-          <Button  color="primary" onClick={this.onAddMateria} disabled={!this.state.selected || this.props.ratificado}>Agregar</Button>{' '}
-          <Button  color="primary" onClick={this.onRemoveMateria} disabled={!this.state.selected || this.props.ratificado}>Retirar</Button>{' '}
-          <Button  color="primary" onClick={this.onRatificate} disabled={!this.state.materias.length || this.props.ratificado}>Ratificar</Button>{' '}
-        </div>
       </div>
-    );
+    )
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    horario: state.horario,
-    ratificado: state.auth.ratificado
-  }
-};
+const mapStateToProps = state => ({
+  usuario: state.auth.usuario
+});
 
 export default connect(mapStateToProps)(Adicion);
