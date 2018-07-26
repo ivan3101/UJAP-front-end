@@ -82,31 +82,14 @@ export default {
       },
     },
     {
-      name: 'Horarios',
-      url: '/home/datos',
+      name: 'Horario Personal',
+      url: '/home/datos/horario-personal',
+      icon: 'icon-clock'
+    },
+    {
+      name: 'Horario Por Seccion',
+      url: '/home/datos/horario-seccion',
       icon: 'icon-clock',
-      children: [
-        {
-          name: 'Horario Por Seccion',
-          url: '/home/datos/horario-seccion',
-          icon: 'icon-clock',
-        },
-        {
-          name: 'OPCIONES',
-          url: '/home/INGRESAURL',
-          icon: 'icon-cursor',
-        },
-        {
-          name: 'OPCIONES',
-          url: '/home/INGRESAURL',
-          icon: 'icon-cursor',
-        },
-        {
-          name: 'OPCIONES',
-          url: '/home/INGRESAURL',
-          icon: 'icon-cursor',
-        },
-      ],
     },
     {
       name: 'Datos Academicos',

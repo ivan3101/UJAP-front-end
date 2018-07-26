@@ -93,6 +93,11 @@ const EstadoSolicitud = Loadable({
   loading: Loading
 });
 
+const HorarioPersonal = Loadable({
+  loader: () => import('./components/datos-academicos/horario-personal'),
+  loading: Loading
+});
+
 const routes = [
   { path: '/home', exact: true, name: 'Home', component: DefaultLayout },
   { path: '/login', name: 'Login', component: Login },
@@ -102,17 +107,18 @@ const routes = [
   { path: '/home/procesos/ret-acad', name: 'RetiroAcademico', component: RetiroAcademico },
   { path: '/home/procesos/adicion', name: 'Adicion', component: Adicion },
   { path: '/home/procesos/sol-ret-sem', name: 'SolicitudRetiroSemestre', component: SolicitudRetiroSemestre },
-  {path:'/home/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion},
-  {path:'/home/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
-  {path:'/home/datos/situacion-academico', name:'Situacion Academica', component:SituacionAcademico},
-  {path:'/home/datos/situacion-academico1', name:'Situacion Academica', component:SituacionAcademico1},
-  {path:'/home/datos/historico-administrativo', name:'Historico Administrativo', component:HistoricoAdministrativo},
   { path:'/home/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion },
   { path: '/home/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil },
   { path: '/home/solicitudes/articulo-58', name: 'Articulo 58', component: Articulo58},
   { path: '/home/solicitudes/servicio-comunitario', name: 'Servicio Comunitario', component: ServicioComunitario},
   { path: '/home/solicitudes/articulo-48', name: 'Articulo 48', component: art48},
   { path: '/home/solicitudes/estado-solicitud', name: 'Estado de solicitudes', component: EstadoSolicitud},
+  { path: '/home/datos/horario-personal', name: 'Horario Personal', component: HorarioPersonal},
+  { path:'/home/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion },
+  {path:'/home/datos/historico-academico', name:'Historico Academico', component:HistoricoAcademico},
+  {path:'/home/datos/situacion-academico', name:'Situacion Academica', component:SituacionAcademico},
+  {path:'/home/datos/situacion-academico1', name:'Situacion Academica', component:SituacionAcademico1},
+  {path:'/home/datos/historico-administrativo', name:'Historico Administrativo', component:HistoricoAdministrativo},
 ];
 
 export default routes;
