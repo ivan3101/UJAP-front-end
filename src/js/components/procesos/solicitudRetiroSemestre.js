@@ -18,12 +18,12 @@ class SolicitudRetiroSemestre extends React.Component {
   async componentDidMount() {
     const usuario = this.props.usuario;
     try {
-      const response = await axios.get(URL_PAGOS(usuario._id, '20181CR'))
+      const response = await axios.get(URL_PAGOS(usuario._id, '20181CR'));
       if (response.data) {
         this.setState(() => ({
           pagos: response.data
         }));
-        const response2 = await axios.get(URL_ARTICULO(usuario._id, 'retiro'));
+        const response2 = await axios.get(URL_ARTICULO(usuario._id, 'Retiro'));
         if (response2.data) {
           this.setState(() => ({
             retirado: true,
@@ -40,7 +40,7 @@ class SolicitudRetiroSemestre extends React.Component {
   onSolicitar = async () => {
     const usuario = this.props.usuario;
     try {
-      await axios.post(URL_ARTICULO(usuario._id, 'retiro'));
+      await axios.post(URL_ARTICULO(usuario._id, 'Retiro'));
       this.setState(() => ({
         sent: true,
         retirado: true,
