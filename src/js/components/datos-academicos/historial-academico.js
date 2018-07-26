@@ -1,148 +1,97 @@
 import React from 'react';
 import { Table, Container,  Col, Fade } from 'reactstrap';
 import  './datos-academicos.css'
+import axios from 'axios';
+import {connect} from 'react-redux';
+import {URL_HISTORICO} from "../../utilities/constants";
 
 class Historial extends React.Component {
-    
 
+  state = {
+    historico: []
+  };
+
+  async componentDidMount() {
+    try {
+      const response = await axios.get(URL_HISTORICO(this.props.usuario._id));
+      if (response.data) {
+        console.log(response.data)
+        this.setState(() => ({
+          historico: response.data
+        }))
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   render() {
-      const style = {
-        textAlign: 'center',
-        backgroundColor: '#336699',  
-        color: 'white',
+    const style = {
+      textAlign: 'center',
+      backgroundColor: '#336699',
+      color: 'white',
 
-      };
+    };
 
     return (
-       
-      <Fade>  
-      <Container className="border "> 
+      <Fade>
+        <Container className="border ">
           <br />
-        <Container style={style}> <Col  md="12"> Periodo: 20181CR </Col> </Container> 
-        <Table size="sm">
-            <thead>
-            <tr>
-                <th>Car.</th>
-                <th>Asignatura</th>
-                <th>Acta</th>
-                <th>Seccion</th>
-                <th>Nota</th>
-                <th>U.C.</th>
-                <th>Obs.</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">AIC</th>
-                <td>ACI08304</td>
-                <td>Interfaces de usuario</td>
-                <td>92052</td>
-                <td>308C1</td>
-                <td>500</td>
-                
-            </tr>
-            <tr>
-                <th scope="row">AIC</th>
-                <td>ACI08304</td>
-                <td>Interfaces de usuario</td>
-                <td>92052</td>
-                <td>308C1</td>
-                <td>500</td>
-                
-            </tr>
-            <tr>
-            <th scope="row">AIC</th>
-                <td>ACI08304</td>
-                <td>Interfaces de usuario</td>
-                <td>92052</td>
-                <td>308C1</td>
-                <td>500</td>
-                
-            </tr>
-            <tr>
-            <th scope="row"></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                    U.C. Aprobadas: 0
-                    <br/>
-                    Indice Academico(IA):<span className="red" > 5</span>
-                    
-                </td>
-                
-            </tr>
-            </tbody>
-        </Table>
-       
-        
-         <hr />
-         <br />
-        <Container style={style}> <Col  md="12"> Periodo:  20173CR </Col> </Container> 
-        <Table size="sm" >
-            <thead>
-            <tr>
-                <th>Car.</th>
-                <th>Asignatura</th>
-                <th>Acta</th>
-                <th>Seccion</th>
-                <th>Nota</th>
-                <th>U.C.</th>
-                <th>Obs.</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">AIC</th>
-                <td>ACI08304</td>
-                <td>Interfaces de usuario</td>
-                <td>92052</td>
-                <td>308C1</td>
-                <td>500</td>
-                
-            </tr>
-            <tr>
-                <th scope="row">AIC</th>
-                <td>ACI08304</td>
-                <td>Interfaces de usuario</td>
-                <td>92052</td>
-                <td>308C1</td>
-                <td>500</td>
-                
-            </tr>
-            <tr>
-            <th scope="row">AIC</th>
-                <td>ACI08304</td>
-                <td>Interfaces de usuario</td>
-                <td>92052</td>
-                <td>308C1</td>
-                <td>500</td>
-                
-            </tr>
-            <tr>
-            <th scope="row"></th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>
-                    U.C. Aprobadas: 0
-                    <br/>
-                    Indice Academico(IA): <span className="red" >1</span>
-                    
-                </td>
-                
-            </tr>
-            </tbody>
-        </Table>
+          {
+            !!this.state.historico.length && this.state.historico.map(historico => {
+              const row = (<Container style={style}> <Col  md="12"> Periodo: {historico.periodo}</Col></Container>);
 
-    </Container>
-    </Fade>    
+              const materias = historico.materias.map(materia => (
+                <tr>
+                  <th scope="row">{materia.nombre}</th>
+                  <td>{materia.nota}</td>
+                  <td>{materia.uc}</td>
+                </tr>
+              ));
+
+              return (
+                <div>
+                  {row}
+                  <Table size="sm">
+                    <thead>
+                    <tr>
+                      <th>Asignatura</th>
+                      <th>Nota</th>
+                      <th>U.C.</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {materias}
+                    <tr>
+                      <th scope="row"></th>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td>
+                        U.C. Aprobadas: {historico.ucTotal}
+                        <br/>
+                        Indice Academico(IA):<span className={historico.promedio < 10 ? 'danger' : 'success'} >{historico.promedio}</span>
+                      </td>
+
+                    </tr>
+                    </tbody>
+                  </Table>
+                </div>
+              )
+
+            })
+          }
+
+        </Container>
+      </Fade>
     );
   }
 }
-export default Historial;
+
+const mapStateToProps = state => ({
+  usuario: state.auth.usuario
+});
+
+export default connect(mapStateToProps)(Historial);

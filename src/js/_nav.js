@@ -92,77 +92,12 @@ export default {
       icon: 'icon-clock',
     },
     {
-      name: 'Datos Academicos',
-      url: '/home/datos',
+      name: 'Historico Academico',
+      url: '/home/datos/historico-academico',
       icon: 'icon-calendar',
-      children: [
-        {
-          name: 'Historico Academico',
-          url: '/home/datos/historico-academico',
-          icon: 'icon-calendar',
-        },
-        {
-          name: 'Situacion Academica',
-          url: '/home/datos/situacion-academico1',
-          icon: 'icon-cursor',
-        },
-        {
-          name: 'Situacion Academica',
-          url: '/home/datos/situacion-academico',
-          icon: 'icon-cursor',
-        },
-        {
-          name: 'Historico Administrativo',
-          url: '/home/datos/historico-administrativo',
-          icon: 'icon-cursor',
-        },
-      ],
-    },
-    {
-      name: 'Datos Administrativos',
-      url: '/home/INGRESAURL',
-      icon: 'icon-cursor',
-      children: [
-        {
-          name: 'OPCIONES',
-          url: '/home/INGRESAURL',
-          icon: 'icon-cursor',
-        },
-        {
-          name: 'OPCIONES',
-          url: '/home/INGRESAURL',
-          icon: 'icon-cursor',
-        },
-      ],
     },
     {
       divider: true,
-    },
-    {
-      title: true,
-      name: 'Materias',
-    },
-    {
-      name: 'Administracion',
-      url: '/home/pages',
-      icon: 'icon-star',
-      children: [
-        {
-          name: 'Cargar Notas',
-          url: '/home/1',
-          icon: 'icon-star',
-        },
-        {
-          name: 'Secciones',
-          url: '/home/2',
-          icon: 'icon-star',
-        },
-        {
-          name: 'Estudiantes Inscritos',
-          url: '/home/3',
-          icon: 'icon-star',
-        },
-      ],
     },
     {
       name: 'Desconectar',

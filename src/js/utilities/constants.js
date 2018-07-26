@@ -17,3 +17,5 @@ export const URL_PAGOS = (id, periodo = '20181CR') => `${BASE_URL}/usuarios/${id
 export const URL_SECCIONES = carrera => `${BASE_URL}/materias/secciones?carrera=${carrera}`;
 
 export const URL_MATERIAS_SECCION = (seccion, carrera) => `${BASE_URL}/materias/secciones/${seccion}?carrera=${carrera}`;
+
+export const URL_HISTORICO = id => `${BASE_URL}/usuarios/${id}/historico`;
