@@ -3,12 +3,7 @@ import { Table, Button, Row, Col, Card,CardBody,CardHeader } from 'reactstrap';
 import {connect} from 'react-redux';
 import axios from "axios";
 import {URL_ARTICULO, URL_HORARIO} from "../../utilities/constants";
-const styles={
-  color: "black",
-  background: "#f2f3f2",
-  border: "1px solid #ccc",
-  boxShadow: "1px 2px #cce",
-};
+
 const header={
   color:"white",
   background:"rgb(96,181,254)"
@@ -94,8 +89,8 @@ class Articulo48 extends React.Component {
           </Table>
         </div>
         <div>
-          <Card style={styles}>
-            <CardHeader style={header}>
+          <Card >
+            <CardHeader style={{background: this.props.theme === 'http://localhost:5000/style.css'? 'rgb(96,181,254)' : '#bbbbbb', color: this.props.theme === 'http://localhost:5000/style.css'? 'white' : 'black'}}>
               <h3>
                 Solicitud
               </h3>
@@ -155,7 +150,8 @@ class Articulo48 extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    student: state.auth.usuario
+    student: state.auth.usuario,
+    theme: state.theme.theme
   }
 };
 

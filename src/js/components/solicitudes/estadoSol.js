@@ -71,8 +71,8 @@ class estadoSol extends React.Component {
           </Table>
         </div>
         <div>
-          <Card style={styles}>
-            <CardHeader style={header}>
+          <Card>
+            <CardHeader style={{background: this.props.theme === 'http://localhost:5000/style.css'? 'rgb(96,181,254)' : '#bbbbbb', color: this.props.theme === 'http://localhost:5000/style.css'? 'white' : 'black'}}>
               <h3>
                 Estado de solicitudes
               </h3>
@@ -110,6 +110,7 @@ class estadoSol extends React.Component {
 const mapStateToProps = state => {
   return {
     student: state.auth.usuario,
+    theme: state.theme.theme
   }
 };
 

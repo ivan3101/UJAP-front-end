@@ -26,12 +26,6 @@ class Historial extends React.Component {
   }
 
   render() {
-    const style = {
-      textAlign: 'center',
-      backgroundColor: '#336699',
-      color: 'white',
-
-    };
 
     return (
       <Fade>
@@ -39,7 +33,7 @@ class Historial extends React.Component {
           <br />
           {
             !!this.state.historico.length && this.state.historico.map(historico => {
-              const row = (<Container style={style}> <Col  md="12"> Periodo: {historico.periodo}</Col></Container>);
+              const row = (<Container style={{background: this.props.theme === 'http://localhost:5000/style.css'? '#336699' : '#bbbbbb', color: this.props.theme === 'http://localhost:5000/style.css'? 'white' : 'black'}}> <Col  md="12"> Periodo: {historico.periodo}</Col></Container>);
 
               const materias = historico.materias.map(materia => (
                 <tr>
@@ -91,7 +85,8 @@ class Historial extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  usuario: state.auth.usuario
+  usuario: state.auth.usuario,
+  theme: state.theme.theme
 });
 
 export default connect(mapStateToProps)(Historial);

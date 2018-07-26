@@ -8,10 +8,11 @@ import App from './js/App';
 import { Provider } from 'react-redux';
 import configureStore from './js/store/configStore';
 import {loginUser} from "./js/actions/auth";
-import {URL_LOGIN_ESTUDIANTE, URL_LOGIN_PROFESOR} from "./js/utilities/constants";
-import {specialThemeAction} from "./js/actions/theme";
+import {URL_LOGIN_ESTUDIANTE} from "./js/utilities/constants";
 
 const store = configureStore();
+
+store.dispatch(loginUser(URL_LOGIN_ESTUDIANTE, {username: 'idemeneze14', password: '123456'}));
 
 ReactDOM.render(
   <Provider store={store}>

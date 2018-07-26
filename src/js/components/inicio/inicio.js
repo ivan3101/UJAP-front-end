@@ -4,18 +4,6 @@ import Noticias from './noticias';
 import logoPath from '../../../assets/img/brand/logo.png';
 import {connect} from 'react-redux';
 
-const styles={
-  // color: "black",
-  // background: "#f2f3f2",
-  // border: "1px solid #ccc",
-  // boxShadow: "1px 2px #cce",
-};
-const header={
-  color:"white",
-  background:"rgb(96,181,254)"
-
-};
-
 class Inicio extends Component {
 
   render = () => (
@@ -26,8 +14,8 @@ class Inicio extends Component {
           <Col md="12">
             <Row>
               <Container fluid>
-                <Card style={styles}>
-                  <CardHeader style={header}>
+                <Card>
+                  <CardHeader style={{background: this.props.theme === 'http://localhost:5000/style.css'? 'rgb(96,181,254)' : '#bbbbbb', color: this.props.theme === 'http://localhost:5000/style.css'? 'white' : 'black'}}>
                     <h3>
                       Bienvenido a UJAP en linea
                     </h3>
@@ -35,7 +23,8 @@ class Inicio extends Component {
                   <CardBody>
                     <Row>
                       <Col md="2">
-                        <img src={logoPath} alt="logo ujap" className="img-fluid"/>
+                        <img src={logoPath} alt="logo ujap" className="img-fluid" style={
+                          this.props.theme === 'http://localhost:5000/index.css'? {filter: 'grayscale(100%)'} : {}}/>
                       </Col>
                       <Col md="10">
                         <p className="lead">Bienvenido a UJAP en linea {this.props.name}. Tu portal para conocer las ultimas noticias sobre la UJAP y administrar tu vida estudiantil</p>
@@ -58,7 +47,8 @@ class Inicio extends Component {
 }
 
 const mapStateToProps = state => ({
-  name: `${state.auth.usuario.nombre} ${state.auth.usuario.apellido}`
+  name: `${state.auth.usuario.nombre} ${state.auth.usuario.apellido}`,
+  theme: state.theme.theme
 });
 
 export default connect(mapStateToProps)(Inicio);

@@ -1,24 +1,23 @@
 import React from 'react';
 import {Card, CardBody, CardTitle, CardText, Col, CardSubtitle} from 'reactstrap';
 import moment from 'moment';
+import {connect} from 'react-redux';
 
-const cardColor = {
-
-  backgroundColor:'#336699',
-  color:'white',
-};
-
-const Noticia = ({titulo, cuerpo, fecha}) => (
+const Noticia = (props) => (
   <Col md="4">
-    <Card style={cardColor}>
+    <Card style={{backgroundColor: props.theme === 'http://localhost:5000/style.css'? '#336699' : '#bbbbbb', color: props.theme === 'http://localhost:5000/style.css'? 'white' : 'black'}}>
       <CardBody>
-        <CardTitle>{titulo}</CardTitle>
-        <CardSubtitle>Publicado el {moment(fecha).format('D-M-YYYY')}</CardSubtitle>
+        <CardTitle>{props.titulo}</CardTitle>
+        <CardSubtitle>Publicado el {moment(props.fecha).format('D-M-YYYY')}</CardSubtitle>
         <br/>
-        <CardText>{cuerpo}</CardText>
+        <CardText>{props.cuerpo}</CardText>
       </CardBody>
     </Card>
   </Col>
 );
 
-export default Noticia;
+const mapStateToProps = state => ({
+  theme: state.theme.theme
+});
+
+export default connect(mapStateToProps)(Noticia);
