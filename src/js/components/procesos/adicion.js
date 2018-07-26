@@ -183,6 +183,37 @@ class Adicion extends Component {
           {this.state.error && (<div className="alert alert-danger" role="alert">
             {this.state.errorMsg}
           </div>)}
+          <div>
+            <Table bordered responsive style={{backgroundColor: 'white'}}>
+              <tbody>
+              <tr>
+                <th>Estudiante</th>
+                <td>{`${this.props.usuario.nombre} ${this.props.usuario.apellido}`}</td>
+                <th>Cedula</th>
+                <td>{this.props.usuario.cedula}</td>
+                <th>Carrera</th>
+                <td>{this.props.usuario.carrera.nombre}</td>
+
+              </tr>
+              <tr>
+                <th>Indice Academico Acumulado</th>
+                <td>{this.props.usuario.promedio}</td>
+                <th>Periodo</th>
+                <td>20181CR</td>
+                <th>Estatus academido</th>
+                <td>Alumno regular {this.props.usuario.estado}</td>
+              </tr>
+              <tr>
+                <th>Estatus Administrativo</th>
+                <td>{this.props.usuario.beca}</td>
+                <th>Total de UC aprobadas</th>
+                <td>{this.props.usuario.uc}</td>
+                <th>Cohorte</th>
+                <td>{this.props.usuario.cohorte}</td>
+              </tr>
+              </tbody>
+            </Table>
+          </div>
           <Row>
             <Col md={{size: 2, offset: 2}}>
               <Dropdown isOpen={this.state.dropdownMaterias} toggle={() => this.toggle('dropdownMaterias')}>
