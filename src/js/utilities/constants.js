@@ -11,3 +11,5 @@ export const URL_HORARIO = (id, periodo = '20181CR') => `${BASE_URL}/usuarios/${
 export const URL_ARTICULO = (id, articulo) => `${BASE_URL}/usuarios/${id}/articulo?art=${articulo}`;
 
 export const URL_MATERIAS_DISPONIBLES = (semestre, carrera) => `${BASE_URL}/usuarios/materias?semestre=${semestre}&carrera=${carrera}`;
+
+export const URL_PAGOS = (id, periodo = '20181CR') => `${BASE_URL}/usuarios/${id}/pagos?periodo=${periodo}`;
