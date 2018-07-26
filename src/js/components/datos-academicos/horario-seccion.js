@@ -1,14 +1,61 @@
 import React from 'react';
-import { Table } from 'reactstrap';
+import { Table, Col, Row, Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import './datos-academicos.css';
 import moment from "moment";
 import {path} from "ramda";
+import axios from 'axios';
+import {connect} from 'react-redux';
+import {URL_MATERIAS_SECCION, URL_SECCIONES} from "../../utilities/constants";
 
 class Horario extends React.Component {
   state={
     secciones: [],
-    horario: []
+    horario: [],
+    toggle: false,
+    seccionSelected: ''
   };
+
+  toggle = () => {
+    this.setState(prevState => ({
+      toggle: !prevState.toggle
+    }));
+  };
+
+  onSelectSeccion = async e => {
+    const seccion = e.currentTarget.innerText;
+    const usuario = this.props.usuario;
+    this.setState(() => ({
+      seccionSelected: seccion
+    }));
+    try {
+      const response = await axios.get(URL_MATERIAS_SECCION(seccion, usuario.carrera._id));
+      if (response.data) {
+        this.setState(() => ({
+          horario: response.data.map(materia => ({
+            materia: materia._id,
+            nombre: materia.nombre,
+            bloques: materia.horario[0].bloque.slice(0),
+            seccion: materia.horario[0].seccion
+          }))
+        }))
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  async componentDidMount() {
+    try {
+      const response = await axios.get(URL_SECCIONES(this.props.usuario.carrera._id));
+      if (response.data) {
+        this.setState(() => ({
+          secciones: response.data
+        }));
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   addRow = path(['nombre']);
 
@@ -19,9 +66,20 @@ class Horario extends React.Component {
           <h1>Horario por seccion</h1>
         </div>
         <div>
-
-        </div>
-        <div>
+          <Row>
+            <Col md={2}>
+              <Dropdown isOpen={this.state.toggle} toggle={this.toggle}>
+                <DropdownToggle caret>{this.state.seccionSelected ? this.state.seccionSelected : 'Seleccione una seccion'}</DropdownToggle>
+                <DropdownMenu>
+                  {
+                    this.state.secciones.map(seccion => (
+                      <DropdownItem onClick={this.onSelectSeccion} active={this.state.seccionSelected === seccion} >{seccion}</DropdownItem>
+                    ))
+                  }
+                </DropdownMenu>
+              </Dropdown>
+            </Col>
+          </Row>
           <Table bordered responsive style={{backgroundColor: 'white'}}>
             <thead>
             <tr className="tableHorario">
@@ -1913,7 +1971,10 @@ class Horario extends React.Component {
       </div>
     )
   }
-
 }
 
-export default Horario;
+const mapStateToProps = state => ({
+  usuario: state.auth.usuario
+});
+
+export default connect(mapStateToProps)(Horario);

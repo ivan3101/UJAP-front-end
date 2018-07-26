@@ -13,3 +13,7 @@ export const URL_ARTICULO = (id, articulo = null) => `${BASE_URL}/usuarios/${id}
 export const URL_MATERIAS_DISPONIBLES = (semestre, carrera) => `${BASE_URL}/usuarios/materias?semestre=${semestre}&carrera=${carrera}`;
 
 export const URL_PAGOS = (id, periodo = '20181CR') => `${BASE_URL}/usuarios/${id}/pagos?periodo=${periodo}`;
+
+export const URL_SECCIONES = carrera => `${BASE_URL}/materias/secciones?carrera=${carrera}`;
+
+export const URL_MATERIAS_SECCION = (seccion, carrera) => `${BASE_URL}/materias/secciones/${seccion}?carrera=${carrera}`;
