@@ -13,8 +13,6 @@ import {specialThemeAction} from "./js/actions/theme";
 
 const store = configureStore();
 
-store.dispatch(loginUser(URL_LOGIN_PROFESOR, {username: 'jpadron14', password: '123456'}));
-
 ReactDOM.render(
   <Provider store={store}>
     <App />
