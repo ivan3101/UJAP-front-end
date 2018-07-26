@@ -46,11 +46,12 @@ class Adicion extends Component {
             inscrito: true
           }))
         }
+        const response2 = await axios.get(URL_MATERIAS_DISPONIBLES(usuario.semestre, usuario.carrera._id));
+        this.setState(() => ({
+          disponibles: response2.data
+        }))
       }
-      const response2 = await axios.get(URL_MATERIAS_DISPONIBLES(usuario.semestre, usuario.carrera._id));
-      this.setState(() => ({
-        disponibles: response2.data
-      }))
+
     } catch (e) {
       console.log(e)
     }
@@ -174,7 +175,7 @@ class Adicion extends Component {
     return (
       <div>
         <div>
-          <h1>Inscripcion</h1>
+          <h1>Adicion, cambio y retiro</h1>
         </div>
         <div>
           {this.state.sent && (<div className="alert alert-success" role="alert">
@@ -251,7 +252,7 @@ class Adicion extends Component {
               <Button color="primary" onClick={this.onRemoveMateria} block disabled={!this.state.materiaSelected.materia === '' || this.state.inscrito || this.state.horario.findIndex(materia => materia.materia === this.state.materiaSelected.materia) === -1} color={(!this.state.materiaSelected.materia === '' || this.state.inscrito || this.state.horario.findIndex(materia => materia.materia === this.state.materiaSelected.materia) === -1)? 'danger': 'primary'}>Retirar materia</Button>
             </Col>
             <Col>
-              <Button  color="primary" onClick={this.onRatificate} block disabled={!this.state.horario.length || this.state.inscrito} color={(!this.state.horario.length || this.state.inscrito)? 'danger' : 'primary'}>Ratificar</Button>
+              <Button color="primary" onClick={this.onRatificate} block disabled={!this.state.horario.length || this.state.inscrito} color={(!this.state.horario.length || this.state.inscrito)? 'danger' : 'primary'}>Ratificar</Button>
             </Col>
           </Row>
         </div>
