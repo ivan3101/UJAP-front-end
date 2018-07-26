@@ -25,7 +25,7 @@ class Articulo58 extends React.Component {
   async componentDidMount() {
     const user = this.props.usuario;
     try {
-      const response = await axios.get(URL_ARTICULO(user._id, 58));
+      const response = await axios.get(URL_ARTICULO(user._id, 'Articulo 58'));
       if (response.data) {
         this.setState(() => ({
           articulo: response.data,
@@ -46,7 +46,7 @@ class Articulo58 extends React.Component {
     if (!this.state.error || !this.state.sent) {
       try {
         const user = this.props.usuario;
-        await axios.post(URL_ARTICULO(user._id, 58), {
+        await axios.post(URL_ARTICULO(user._id, 'Articulo 58'), {
           materia: this.state.materia,
           mensaje: this.state.mensaje.value
         });

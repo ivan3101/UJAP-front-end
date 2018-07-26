@@ -83,6 +83,16 @@ const ServicioComunitario = Loadable({
   loading: Loading
 });
 
+const art48 = Loadable({
+  loader: () => import('./components/solicitudes/art48'),
+  loading: Loading
+});
+
+const EstadoSolicitud = Loadable({
+  loader: () => import('./components/solicitudes/estadoSol'),
+  loading: Loading
+});
+
 const routes = [
   { path: '/home', exact: true, name: 'Home', component: DefaultLayout },
   { path: '/login', name: 'Login', component: Login },
@@ -100,7 +110,9 @@ const routes = [
   { path:'/home/datos/horario-seccion', name: 'Horario por Seccon', component: HorarioSeccion },
   { path: '/home/solicitudes/peticionEst', name:'Peticion Estudiantil', component:SolicitudEstudiantil },
   { path: '/home/solicitudes/articulo-58', name: 'Articulo 58', component: Articulo58},
-  { path: '/home/solicitudes/servicio-comunitario', name: 'Servicio Comunitario', component: ServicioComunitario}
+  { path: '/home/solicitudes/servicio-comunitario', name: 'Servicio Comunitario', component: ServicioComunitario},
+  { path: '/home/solicitudes/articulo-48', name: 'Articulo 48', component: art48},
+  { path: '/home/solicitudes/estado-solicitud', name: 'Estado de solicitudes', component: EstadoSolicitud},
 ];
 
 export default routes;

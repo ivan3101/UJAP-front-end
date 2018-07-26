@@ -49,6 +49,11 @@ export default {
       class: ''             // optional class names space delimited list for title item ex: "text-center"
     },
     {
+      name: 'Liberacion Articulo 48',
+      url: '/home/solicitudes/articulo-48',
+      icon: 'icon-drop'
+    },
+    {
       name: 'Liberacion Articulo 58',
       url: '/home/solicitudes/articulo-58',
       icon: 'icon-drop',
@@ -61,6 +66,11 @@ export default {
     {
       name: 'Servicio Comunitario',
       url: '/home/solicitudes/servicio-comunitario',
+      icon: 'icon-pencil'
+    },
+    {
+      name: 'Estado de Solicitudes',
+      url: '/home/solicitudes/estado-solicitud',
       icon: 'icon-pencil'
     },
     {

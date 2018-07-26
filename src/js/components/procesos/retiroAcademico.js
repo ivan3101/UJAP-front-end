@@ -114,6 +114,7 @@ class RetiroAcademico extends React.Component {
   render() {
     return(
         <div>
+          <h1>Retiro Academico</h1>
           {this.state.sent && (<div className="alert alert-success" role="alert">
             Retiro ratificado correctamente
           </div>)}

@@ -19,7 +19,6 @@ class SolicitudRetiroSemestre extends React.Component {
     const usuario = this.props.usuario;
     try {
       const response = await axios.get(URL_PAGOS(usuario._id, '20181CR'))
-      console.log(response.data);
       if (response.data) {
         this.setState(() => ({
           pagos: response.data
@@ -63,6 +62,7 @@ class SolicitudRetiroSemestre extends React.Component {
   render() {
     return(
       <div>
+        <h1>Solicitud de retiro de semestre</h1>
         {this.state.sent && (<div className="alert alert-success" role="alert">
           Solicitud creada correctamente
         </div>)}

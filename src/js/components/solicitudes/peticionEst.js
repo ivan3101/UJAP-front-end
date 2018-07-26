@@ -35,7 +35,7 @@ class SolicitudEstudiantil extends Component {
 
   async componentDidMount() {
     const user = this.props.usuario;
-    const response = await axios.get(URL_ARTICULO(user._id, 1));
+    const response = await axios.get(URL_ARTICULO(user._id, 'Peticion Estudiantil'));
     if (response.data) {
       this.setState(() => ({
         articulo: response.data,
@@ -79,7 +79,7 @@ class SolicitudEstudiantil extends Component {
     if (!this.state.error || !this.state.sent) {
       try {
         const user = this.props.usuario;
-        await axios.post(URL_ARTICULO(user._id, 1), {
+        await axios.post(URL_ARTICULO(user._id, 'Peticion Estudiantil'), {
           asunto: this.state.asunto.value,
           email: this.state.email.value,
           mensaje: this.state.mensaje.value

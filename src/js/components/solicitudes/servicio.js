@@ -16,7 +16,7 @@ class ServicioComunitario extends Component {
 
   async componentDidMount() {
     const user = this.props.usuario;
-    const response = await axios.get(URL_ARTICULO(user._id, 'servicio comunitario'));
+    const response = await axios.get(URL_ARTICULO(user._id, 'Servicio Comunitario'));
     if (response.data) {
       this.setState(() => ({
         error: true,
@@ -34,7 +34,7 @@ class ServicioComunitario extends Component {
   onSend = async () => {
     try {
       const user = this.props.usuario;
-      await axios.post(URL_ARTICULO(user._id, 'servicio comunitario'));
+      await axios.post(URL_ARTICULO(user._id, 'Servicio Comunitario'));
       this.setState(() => ({
         sent: true,
         error: false,
@@ -50,7 +50,7 @@ class ServicioComunitario extends Component {
     return (
       <Fade in>
         <div>
-          <h1>Peticion Estudiantil</h1>
+          <h1>Servicio Comunitario</h1>
           <Table bordered responsive style={{backgroundColor: 'white'}}>
             <tbody>
             <tr>
