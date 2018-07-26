@@ -98,6 +98,16 @@ const HorarioPersonal = Loadable({
   loading: Loading
 });
 
+const Secciones = Loadable({
+  loader: () => import('./components/administrar/secciones'),
+  loading: Loading
+});
+
+const Notas = Loadable({
+  loader: () => import('./components/administrar/notas'),
+  loading: Loading
+});
+
 const routes = [
   { path: '/home', exact: true, name: 'Home', component: DefaultLayout },
   { path: '/login', name: 'Login', component: Login },
@@ -119,6 +129,8 @@ const routes = [
   {path:'/home/datos/situacion-academico', name:'Situacion Academica', component:SituacionAcademico},
   {path:'/home/datos/situacion-academico1', name:'Situacion Academica', component:SituacionAcademico1},
   {path:'/home/datos/historico-administrativo', name:'Historico Administrativo', component:HistoricoAdministrativo},
+  {path: '/home/administrar/secciones', name: 'Secciones', component: Secciones},
+  {path: '/home/administrar/notas', name: 'Notas', component: Notas}
 ];
 
 export default routes;

@@ -15,6 +15,8 @@ import {
 } from '@coreui/react';
 // sidebar nav config
 import navigation from '../../_nav';
+import navigation2 from '../../_nav2';
+import {connect} from 'react-redux';
 // routes config
 import routes from '../../routes';
 import DefaultAside from './DefaultAside';
@@ -32,7 +34,7 @@ class DefaultLayout extends Component {
           <AppSidebar fixed display="lg">
             <AppSidebarHeader />
             <AppSidebarForm />
-            <AppSidebarNav navConfig={navigation} {...this.props} />
+            <AppSidebarNav navConfig={this.props.tipo === 'estudiante' ? navigation : navigation2} {...this.props} />
             <AppSidebarFooter />
             <AppSidebarMinimizer />
           </AppSidebar>
@@ -63,4 +65,8 @@ class DefaultLayout extends Component {
   }
 }
 
-export default DefaultLayout;
+const mapStateToProps = state => ({
+  tipo: state.auth.tipo
+});
+
+export default connect(mapStateToProps)(DefaultLayout);

@@ -19,3 +19,7 @@ export const URL_SECCIONES = carrera => `${BASE_URL}/materias/secciones?carrera=
 export const URL_MATERIAS_SECCION = (seccion, carrera) => `${BASE_URL}/materias/secciones/${seccion}?carrera=${carrera}`;
 
 export const URL_HISTORICO = id => `${BASE_URL}/usuarios/${id}/historico`;
+
+export const URL_PROFESOR_SECCION = id => `${BASE_URL}/profesores/${id}/materias/secciones`;
+
+export const URL_MATERIAS_PROFESOR = (id, seccion) => `${BASE_URL}/profesores/${id}/materias/secciones/${seccion}`;

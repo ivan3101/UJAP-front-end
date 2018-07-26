@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {TabContent, TabPane} from 'reactstrap';
 import PropTypes from 'prop-types';
 import { AppSwitch } from '@coreui/react'
+import {connect} from 'react-redux';
+import {normalThemeAction, specialThemeAction} from "../../actions/theme";
 
 const propTypes = {
   children: PropTypes.node,
@@ -17,8 +19,20 @@ class DefaultAside extends Component {
     this.toggle = this.toggle.bind(this);
     this.state = {
       activeTab: '1',
+      discapacidad: false
     };
   }
+
+  onDiscapacidad = () => {
+    if (this.state.discapacidad) {
+      this.props.dispatch(normalThemeAction());
+    } else {
+      this.props.dispatch(specialThemeAction());
+    }
+    this.setState(prevState => ({
+      discapacidad: !prevState.discapacidad
+    }))
+  };
 
   toggle(tab) {
     if (this.state.activeTab !== tab) {
@@ -41,7 +55,7 @@ class DefaultAside extends Component {
             <div className="aside-options">
               <div className="clearfix mt-4">
                 <small><b>Modo de discapacidad visual</b></small>
-                <AppSwitch className={'float-right'} variant={'pill'} label color={'primary'}  size={'sm'}/>
+                <AppSwitch className={'float-right'} variant={'pill'} label color={'primary'}  size={'sm'} onClick={this.onDiscapacidad}/>
               </div>
               <div>
                 <small className="text-muted">
@@ -72,4 +86,4 @@ class DefaultAside extends Component {
 DefaultAside.propTypes = propTypes;
 DefaultAside.defaultProps = defaultProps;
 
-export default DefaultAside;
+export default connect()(DefaultAside);
