@@ -12,7 +12,7 @@ import {URL_LOGIN_ESTUDIANTE, URL_LOGIN_PROFESOR} from "./js/utilities/constants
 
 const store = configureStore();
 
-store.dispatch(loginUser(URL_LOGIN_PROFESOR, {username: 'jpadron14', password: '123456'}));
+// store.dispatch(loginUser(URL_LOGIN_PROFESOR, {username: 'jpadron14', password: '123456'}));
 
 ReactDOM.render(
   <Provider store={store}>
