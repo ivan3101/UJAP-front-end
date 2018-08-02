@@ -53,7 +53,7 @@ class Secciones extends React.Component {
       const response = await axios.get(URL_PROFESOR_SECCION(this.props.usuario._id));
       if (response.data) {
         this.setState(() => ({
-          secciones: response.data
+          secciones: response.data.secciones
         }));
       }
     } catch (e) {

@@ -25,3 +25,5 @@ export const URL_PROFESOR_SECCION = id => `${BASE_URL}/profesores/${id}/materias
 export const URL_MATERIAS_PROFESOR = (id, seccion) => `${BASE_URL}/profesores/${id}/materias/secciones/${seccion}`;
 
 export const URL_PAPELES = id => `${BASE_URL}/usuarios/${id}/papeles`;
+
+export const URL_NOTAS = (id, materia, seccion) => `${BASE_URL}/profesores/${id}/notas/${materia}?seccion=${seccion}`;
