@@ -97,6 +97,10 @@ export default {
       icon: 'icon-calendar',
     },
     {
+      name: 'Entrega de Papeles',
+      url: '/home/datos/papeles',
+    },
+    {
       divider: true,
     },
     {

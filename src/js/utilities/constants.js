@@ -23,3 +23,5 @@ export const URL_HISTORICO = id => `${BASE_URL}/usuarios/${id}/historico`;
 export const URL_PROFESOR_SECCION = id => `${BASE_URL}/profesores/${id}/materias/secciones`;
 
 export const URL_MATERIAS_PROFESOR = (id, seccion) => `${BASE_URL}/profesores/${id}/materias/secciones/${seccion}`;
+
+export const URL_PAPELES = id => `${BASE_URL}/usuarios/${id}/papeles`;

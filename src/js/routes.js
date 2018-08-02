@@ -108,6 +108,11 @@ const Notas = Loadable({
   loading: Loading
 });
 
+const Papeles = Loadable({
+  loader: () => import('./components/datos-academicos/papeles'),
+  loading: Loading
+});
+
 const routes = [
   { path: '/home', exact: true, name: 'Home', component: DefaultLayout },
   { path: '/login', name: 'Login', component: Login },
@@ -129,6 +134,7 @@ const routes = [
   {path:'/home/datos/situacion-academico', name:'Situacion Academica', component:SituacionAcademico},
   {path:'/home/datos/situacion-academico1', name:'Situacion Academica', component:SituacionAcademico1},
   {path:'/home/datos/historico-administrativo', name:'Historico Administrativo', component:HistoricoAdministrativo},
+  {path: '/home/datos/papeles', name: 'Entrega de papeles', component: Papeles},
   {path: '/home/administrar/secciones', name: 'Secciones', component: Secciones},
   {path: '/home/administrar/notas', name: 'Notas', component: Notas}
 ];
